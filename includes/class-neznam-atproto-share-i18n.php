@@ -1,18 +1,4 @@
 <?php
-
-/**
- * Define the internationalization functionality
- *
- * Loads and defines the internationalization files for this plugin
- * so that it is ready for translation.
- *
- * @link       https://nezn.am
- * @since      1.0.0
- *
- * @package    Neznam_Atproto_Share
- * @subpackage Neznam_Atproto_Share/includes
- */
-
 /**
  * Define the internationalization functionality.
  *
@@ -24,7 +10,7 @@
  * @subpackage Neznam_Atproto_Share/includes
  * @author     Marko Banušić <mbanusic@gmail.com>
  */
-class Neznam_Atproto_Share_i18n {
+class Neznam_Atproto_Share_I18n {
 
 
 	/**
@@ -39,8 +25,5 @@ class Neznam_Atproto_Share_i18n {
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
-
 	}
-
-
 }

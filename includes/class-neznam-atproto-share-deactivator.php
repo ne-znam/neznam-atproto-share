@@ -1,15 +1,4 @@
 <?php
-
-/**
- * Fired during plugin deactivation
- *
- * @link       https://nezn.am
- * @since      1.0.0
- *
- * @package    Neznam_Atproto_Share
- * @subpackage Neznam_Atproto_Share/includes
- */
-
 /**
  * Fired during plugin deactivation.
  *
@@ -33,5 +22,4 @@ class Neznam_Atproto_Share_Deactivator {
 		$timestamp = wp_next_scheduled( 'neznam-atproto-share_cron' );
 		wp_unschedule_event( $timestamp, 'neznam-atproto-share_cron' );
 	}
-
 }

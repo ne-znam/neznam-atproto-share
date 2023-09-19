@@ -1,18 +1,4 @@
 <?php
-
-/**
- * The file that defines the core plugin class
- *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link       https://nezn.am
- * @since      1.0.0
- *
- * @package    Neznam_Atproto_Share
- * @subpackage Neznam_Atproto_Share/includes
- */
-
 /**
  * The core plugin class.
  *
@@ -77,7 +63,6 @@ class Neznam_Atproto_Share {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
-
 	}
 
 	/**
@@ -102,21 +87,25 @@ class Neznam_Atproto_Share {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-neznam-atproto-share-loader.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-neznam-atproto-share-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-neznam-atproto-share-i18n.php';
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-neznam-atproto-share-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-neznam-atproto-share-admin.php';
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-neznam-atproto-share-admin.php';
+
+		/**
+		 * The class responsible for actual posting to atproto.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'includes/class-neznam-atproto-share-logic.php';
 
 		$this->loader = new Neznam_Atproto_Share_Loader();
-
 	}
 
 	/**
@@ -130,10 +119,9 @@ class Neznam_Atproto_Share {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Neznam_Atproto_Share_i18n();
+		$plugin_i18n = new Neznam_Atproto_Share_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -146,6 +134,7 @@ class Neznam_Atproto_Share {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Neznam_Atproto_Share_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_share = new Neznam_Atproto_Share_Logic( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_settings' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'edit_post', 10, 2 );
@@ -193,5 +182,4 @@ class Neznam_Atproto_Share {
 	public function get_loader() {
 		return $this->loader;
 	}
-
 }
