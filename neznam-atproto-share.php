@@ -10,7 +10,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Neznam Atproto Share
- * Plugin URI:        https://nezn.am/plugins/nezna-atproto-share
+ * Plugin URI:        https://nezn.am/plugins/neznam-atproto-share
  * Description:       Automatically share to Authenticated Transfer Protocol networks like BlueSky
  * Version:           1.0.0
  * Author:            Marko Banušić
@@ -75,4 +75,5 @@ function run_neznam_atproto_share() {
 	$plugin->run();
 
 }
+
 run_neznam_atproto_share();

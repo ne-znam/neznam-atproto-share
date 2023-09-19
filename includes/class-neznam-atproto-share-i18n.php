@@ -43,5 +43,4 @@ class Neznam_Atproto_Share_i18n {
 	}
 
 
-
 }

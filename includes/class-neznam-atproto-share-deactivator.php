@@ -30,7 +30,8 @@ class Neznam_Atproto_Share_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+		$timestamp = wp_next_scheduled( 'neznam-atproto-share_cron' );
+		wp_unschedule_event( $timestamp, 'neznam-atproto-share_cron' );
 	}
 
 }
