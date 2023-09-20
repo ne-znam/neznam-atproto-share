@@ -139,8 +139,10 @@ class Neznam_Atproto_Share {
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_settings' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'edit_post', 10, 2 );
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_meta_box' );
-		$this->loader->add_filter( 'cron_schedule', $plugin_admin, 'cron_schedule' );
+		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'cron_schedule' );
 		$this->loader->add_action( $this->plugin_name . '_cron', $plugin_share, 'cron' );
+		$this->loader->add_filter( 'plugin_action_links_' . $this->plugin_name . '/' . $this->plugin_name . '.php', $plugin_admin, 'settings_link' );
+		$this->loader->add_action( 'cli_init', $plugin_share, 'cli' );
 	}
 
 	/**

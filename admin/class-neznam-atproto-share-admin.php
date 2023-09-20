@@ -44,13 +44,26 @@ class Neznam_Atproto_Share_Admin {
 		$this->version     = $version;
 	}
 
+	public function settings_link( $links ) {
+		// Build and escape the URL.
+		$url = esc_url( get_admin_url() . 'options-writing.php#' . $this->plugin_name );
+		// Create the link.
+		$settings_link = "<a href='$url'>" . __( 'Settings', $this->plugin_name ) . '</a>';
+		// Adds the link to the end of the array.
+		array_unshift(
+			$links,
+			$settings_link
+		);
+		return $links;
+	}
+
 	public function add_settings() {
 		register_setting(
 			'writing',
 			$this->plugin_name . '-url',
 			array(
 				'sanitize_callback' => 'esc_url',
-				'default'           => 'https://bsky.social',
+				'default'           => 'https://bsky.social/',
 			)
 		);
 		register_setting(
@@ -81,7 +94,10 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				echo '<p>Enter yout server information to enable posting.</p>';
 			},
-			'writing'
+			'writing',
+			array(
+				'before_section' => '<hr id="' . esc_html( $this->plugin_name ) . '"/>',
+			)
 		);
 		add_settings_field(
 			$this->plugin_name . '-url',
@@ -97,7 +113,7 @@ class Neznam_Atproto_Share_Admin {
 		);
 		add_settings_field(
 			$this->plugin_name . '-handle',
-			'Username',
+			'Handle/username',
 			function () {
 				?>
 				<input type="text" name="<?php echo esc_html( $this->plugin_name ); ?>-handle" value="<?php echo esc_html( get_option( $this->plugin_name . '-handle' ) ); ?>" />
@@ -112,8 +128,8 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
-				<small><?php esc_html_e( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', $this->plugin_name ); ?></small>
-																																											<?php
+				<small><?php echo __( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', $this->plugin_name ); ?></small>
+				<?php
 			},
 			'writing',
 			$this->plugin_name . '-section'
@@ -123,7 +139,7 @@ class Neznam_Atproto_Share_Admin {
 			'Default to share',
 			function () {
 				?>
-				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-default" value="1" <?php checked( 1, get_option( $this->plugin_name . '-default' ), false ); ?> />
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-default" value="1" <?php checked( 1, get_option( $this->plugin_name . '-default' ), true ); ?> />
 				<?php
 			},
 			'writing',
@@ -193,7 +209,7 @@ class Neznam_Atproto_Share_Admin {
 	}
 
 	public function cron_schedule( $schedules ) {
-		$schedules[ $this->plugin_name . '_every_minute' ] = array(
+		$schedules[ $this->plugin_name . '-every-minute' ] = array(
 			'interval' => 60,
 			'display'  => __( 'Every minute', $this->plugin_name ),
 		);

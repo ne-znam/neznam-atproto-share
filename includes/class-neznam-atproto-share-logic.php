@@ -36,31 +36,27 @@ class Neznam_Atproto_Share_Logic {
 	 */
 	private string $version;
 
-	private string $url;
+	private string $url = '';
 
-	private string $handle;
+	private string $handle = '';
 
-	private string $app_pass;
+	private string $app_pass = '';
 
-	private string $did;
+	private string $did = '';
 
-	private string $access_token;
+	private string $access_token = '';
 
-	private string $refresh_token;
+	private string $refresh_token = '';
 
 	public function __construct( $plugin_name, $version ) {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
-
-		$this->url           = get_option( $this->plugin_name . '-url' );
-		$this->handle        = get_option( $this->plugin_name . '-handle' );
-		$this->app_pass      = get_option( $this->plugin_name . '-secret' );
-		$this->access_token  = get_option( $this->plugin_name . '-access-token' );
-		$this->refresh_token = get_option( $this->plugin_name . '-refresh-token' );
-		$this->did           = $this->get_did( $this->handle );
 	}
 
-	private function get_did( string $handle ): string {
+	private function get_did( string $handle = '' ): string {
+		if ( ! $handle ) {
+			$handle = get_option( $this->plugin_name . '-handle' );
+		}
 		$did = get_option( $this->plugin_name . '-did' );
 		if ( ! $did ) {
 			$body = wp_remote_get( trailingslashit( $this->url ) . 'xrpc/com.atproto.identity.resolveHandle?handle=' . $handle );
@@ -97,33 +93,39 @@ class Neznam_Atproto_Share_Logic {
 	}
 
 	public function post_message( WP_Post $post ): void {
+		$this->url           = get_option( $this->plugin_name . '-url' );
+		$this->did           = $this->get_did();
+		$this->access_token  = get_option( $this->plugin_name . '-access-token' );
+		$this->refresh_token = get_option( $this->plugin_name . '-refresh-token' );
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
-		$image_path      = get_attached_file( get_post_thumbnail_id( $post->ID ) );
-		$blob            = $this->upload_blob( $image_path );
+		$image_path = get_attached_file( get_post_thumbnail_id( $post->ID ) );
+		$blob       = null;
+		if ( $image_path ) {
+			$blob = $this->upload_blob( $image_path );
+		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
-		$body            = wp_json_encode(
-			array(
-				'collection' => 'app.bsky.feed.post',
-				'repo'       => $this->did,
-				'record'     => array(
-					'text'      => $text_to_publish ?? $post->post_title,
-					'createdAt' => gmdate( 'c' ),
-					'embed'     => array(
-						'$type'    => 'app.bsky.embed.external',
-						'external' => array(
-							'uri'         => get_the_permalink( $post ),
-							'title'       => $post->post_title,
-							'description' => get_post_meta( $post->ID, 'subtitle', true ),
-							'thumb'       => $blob,
-						),
+		$body            = array(
+			'collection' => 'app.bsky.feed.post',
+			'repo'       => $this->did,
+			'record'     => array(
+				'text'      => $text_to_publish ?? $post->post_title,
+				'createdAt' => gmdate( 'c' ),
+				'embed'     => array(
+					'$type'    => 'app.bsky.embed.external',
+					'external' => array(
+						'uri'         => get_the_permalink( $post ),
+						'title'       => $post->post_title,
+						'description' => get_post_meta( $post->ID, 'subtitle', true ),
 					),
-					'langs'     => array( 'hr' ),
 				),
-
-			)
+				'langs'     => array( 'hr' ),
+			),
 		);
+		if ( $blob ) {
+			$body['record']['embed']['external']['thumb'] = $blob;
+		}
 		$body = wp_remote_post(
 			trailingslashit( $this->url ) . 'xrpc/com.atproto.repo.createRecord',
 			array(
@@ -131,21 +133,28 @@ class Neznam_Atproto_Share_Logic {
 					'Authorization' => 'Bearer ' . $this->access_token,
 					'Content-Type'  => 'application/json',
 				),
-				'body'    => $body,
+				'body'    => wp_json_encode( $body ),
 			)
 		);
 		$body = json_decode( $body['body'], true );
-		$uri  = $body['uri'];
-		update_post_meta( $post->ID, $this->plugin_name . '-uri', $uri );
+
+		if ( isset( $body['uri'] ) ) {
+			$uri = $body['uri'];
+			update_post_meta( $post->ID, $this->plugin_name . '-uri', $uri );
+		}
 	}
 
 	private function authorize(): void {
+		$this->handle   = get_option( $this->plugin_name . '-handle' );
+		$this->app_pass = get_option( $this->plugin_name . '-secret' );
 		if ( $this->refresh_token ) {
 			$this->refresh_token();
-
 			return;
 		}
-		$body                = wp_remote_post(
+		if ( ! $this->did ) {
+			$this->did = $this->get_did( $this->handle );
+		}
+		$body = wp_remote_post(
 			trailingslashit( $this->url ) . 'xrpc/com.atproto.server.createSession',
 			array(
 				'headers' => array(
@@ -159,7 +168,8 @@ class Neznam_Atproto_Share_Logic {
 				),
 			)
 		);
-		$body                = json_decode( $body['body'], true );
+		$body = json_decode( $body['body'], true );
+
 		$this->access_token  = $body['accessJwt'];
 		$this->refresh_token = $body['refreshJwt'];
 		update_option( $this->plugin_name . '-access-token', $this->access_token );
@@ -183,7 +193,6 @@ class Neznam_Atproto_Share_Logic {
 		if ( 200 !== $body['response']['code'] ) {
 			$this->refresh_token = '';
 			$this->authorize();
-
 			return;
 		}
 		$body                = json_decode( $body['body'], true );
@@ -216,5 +225,9 @@ class Neznam_Atproto_Share_Logic {
 		$body = json_decode( $body['body'], true );
 
 		return $body['blob'];
+	}
+
+	public function cli() {
+		WP_CLI::add_command( 'test', $this );
 	}
 }
