@@ -1,0 +1,18 @@
+{
+    "name": "neznam/neznam-atproto-share",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "Marko Banušić",
+            "email": "mbanusic@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "wp-coding-standards/wpcs": "^3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

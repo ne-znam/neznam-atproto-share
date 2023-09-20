@@ -1,5 +1,15 @@
 <?php
 /**
+ * Define the logic functionality.
+ *
+ * @package   Neznam_Atproto_Share
+ * @subpackage Neznam_Atproto_Share/includes
+ * @link      https://www.neznam.hr
+ * @since      1.0.0
+ */
+
+/**
+ * Define the logic functionality.
  *
  * @since      1.0.0
  * @package    Neznam_Atproto_Share

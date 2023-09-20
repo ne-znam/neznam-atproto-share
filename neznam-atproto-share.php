@@ -1,8 +1,6 @@
 <?php
-
 /**
  * The plugin bootstrap file
- *
  *
  * @link              https://nezn.am
  * @since             1.0.0
@@ -73,7 +71,6 @@ function run_neznam_atproto_share() {
 
 	$plugin = new Neznam_Atproto_Share();
 	$plugin->run();
-
 }
 
 run_neznam_atproto_share();
