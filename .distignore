@@ -6,3 +6,7 @@
 
 .distignore
 .gitignore
+composer.json
+composer.lock
+.editorconfig
+.gitattributes

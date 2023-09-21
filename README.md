@@ -1,19 +1,10 @@
-=== Neznam Atproto Share ===
-Contributors: mbanusic
-Donate link: https://nezn.am
-Tags: atproto, share, bluesky
-Requires at least: 6.0.0
-Requires PHP: 8.0.0
-Tested up to: 6.4
-Stable tag: 1.0.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+# Neznam Atproto Share
 
 Automatically share to Authenticated Transfer Protocol networks like BlueSky
 
-== Description ==
+## Description
 
-This plugin enables automatic posting of articles to ATProto networks like BlueSky.
+This plugin enables automatic posting of articles to ATProto networks like BlueSky. This plugin was written primarily for BlueSky, but it should work with other ATProto networks as well.
 
 The plugin adds a new section in the Settings -> Writing page where you can enter the login information for your ATProto network.
 
@@ -25,30 +16,28 @@ The plugin shares the post to your ATProto network when the post is published vi
 
 We recommend hooking up the cron system to a cron job on your server. You can find more information about this in the WordPress documentation.
 
-== Installation ==
+## Installation
 
-This section describes how to install the plugin and get it working.
-
-1. Upload `neznam-atproto-share.zip` in Plugins admin page, or install direcyly from the plugin search
+1. Upload [`neznam-atproto-share.zip`](https://github.com/ne-znam/neznam-atproto-share/releases/download/1.0.0/neznam-atproto-share.zip) in Plugins admin page, or install direcyly from the plugin search
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Setup the login information in the Settings -> Writing page
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions
 
-= Can I use this with BlueSky =
+### Can I use this with BlueSky
 
 Yes, you can use this with BlueSky. Just make sure you have the correct login information. BlueSky default URL is default in the plugin settings.
 
-= Can I use this with other ATProto networks =
+Please visiti [App Passwords](https://bsky.app/settings/app-passwords) in your BlueSky account to generate a new password for this plugin.
+
+### Can I use this with other ATProto networks
 
 Yes, you can use this with other ATProto networks. Just make sure you have the correct login information.
 
-== Screenshots ==
+## Contributing
 
-1. This screen shows the meta box in the post editor
-2. This screen shows the settings page
+If you have any ideas or suggestions, please feel free to contribute to the plugin by submitting a Issue or Pull Request in the GitHub repository for the plugin.
 
-== Changelog ==
+## License
 
-= 1.0 =
-* Initial release
+This plugin is released under the [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html) license.
