@@ -28,7 +28,7 @@ We recommend hooking up the cron system to a cron job on your server. You can fi
 
 Yes, you can use this with BlueSky. Just make sure you have the correct login information. BlueSky default URL is default in the plugin settings.
 
-Please visiti [App Passwords](https://bsky.app/settings/app-passwords) in your BlueSky account to generate a new password for this plugin.
+Please visit [App Passwords](https://bsky.app/settings/app-passwords) in your BlueSky account to generate a new password for this plugin.
 
 ### Can I use this with other ATProto networks
 
