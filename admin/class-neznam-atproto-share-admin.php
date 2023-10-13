@@ -92,7 +92,7 @@ class Neznam_Atproto_Share_Admin {
 			$this->plugin_name . '-section',
 			'Atproto Share settings',
 			function () {
-				echo '<p>Enter yout server information to enable posting.</p>';
+				echo '<p>Enter your server information to enable posting.</p>';
 			},
 			'writing',
 			array(
