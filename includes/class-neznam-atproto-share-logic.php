@@ -106,6 +106,8 @@ class Neznam_Atproto_Share_Logic {
 			$blob = $this->upload_blob( $image_path );
 		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
+		$user = wp_get_current_user();
+		$user_locale = get_user_meta($user->ID, 'locale', true);
 		$body            = array(
 			'collection' => 'app.bsky.feed.post',
 			'repo'       => $this->did,
@@ -120,7 +122,7 @@ class Neznam_Atproto_Share_Logic {
 						'description' => get_post_meta( $post->ID, 'subtitle', true ),
 					),
 				),
-				'langs'     => array( 'hr' ),
+				'langs'     => array( $user_locale ),
 			),
 		);
 		if ( $blob ) {
