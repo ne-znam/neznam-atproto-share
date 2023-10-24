@@ -1,10 +1,15 @@
 <?php
+/**
+ * Admin class
+ *
+ * @package   Neznam_Atproto_Share
+ * @subpackage Neznam_Atproto_Share/includes
+ * @link      https://www.neznam.hr
+ * @since      1.0.0
+ */
 
 /**
  * The admin-specific functionality of the plugin.
- *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
  *
  * @package    Neznam_Atproto_Share
  * @subpackage Neznam_Atproto_Share/admin
@@ -44,11 +49,19 @@ class Neznam_Atproto_Share_Admin {
 		$this->version     = $version;
 	}
 
+	/**
+	 * Add settings links on plugins page
+	 *
+	 * @param mixed $links Plugin links.
+	 *
+	 * @return mixed
+	 * @since 1.0.0
+	 */
 	public function settings_link( $links ) {
 		// Build and escape the URL.
 		$url = esc_url( get_admin_url() . 'options-writing.php#' . $this->plugin_name );
 		// Create the link.
-		$settings_link = "<a href='$url'>" . __( 'Settings', $this->plugin_name ) . '</a>';
+		$settings_link = "<a href='$url'>" . __( 'Settings', 'neznam-atproto-share' ) . '</a>';
 		// Adds the link to the end of the array.
 		array_unshift(
 			$links,
@@ -57,6 +70,11 @@ class Neznam_Atproto_Share_Admin {
 		return $links;
 	}
 
+	/**
+	 * Add all settings
+	 *
+	 * @since    1.0.0
+	 */
 	public function add_settings() {
 		register_setting(
 			'writing',
@@ -70,14 +88,14 @@ class Neznam_Atproto_Share_Admin {
 			'writing',
 			$this->plugin_name . '-handle',
 			array(
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => array( $this, 'check_handle' ),
 			)
 		);
 		register_setting(
 			'writing',
 			$this->plugin_name . '-secret',
 			array(
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => array( $this, 'check_password' ),
 			)
 		);
 		register_setting(
@@ -92,7 +110,8 @@ class Neznam_Atproto_Share_Admin {
 			$this->plugin_name . '-section',
 			'Atproto Share settings',
 			function () {
-				echo '<p>Enter your server information to enable posting.</p>';
+				echo '<p>' . esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) . '</p>';
+				wp_nonce_field( $this->plugin_name . '-save-settings', $this->plugin_name . '-nonce' );
 			},
 			'writing',
 			array(
@@ -105,7 +124,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="text" name="<?php echo esc_html( $this->plugin_name ); ?>-url" value="<?php echo esc_html( get_option( $this->plugin_name . '-url' ) ); ?>" /><br>
-				<small><?php esc_html_e( 'Enter the URL of your provider or leave as is for BlueSky', $this->plugin_name ); ?></small>
+				<small><?php esc_html_e( 'Enter the URL of your provider or leave as is for BlueSky', 'neznam-atoproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -128,7 +147,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
-				<small><?php echo __( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', $this->plugin_name ); ?></small>
+				<small><?php echo esc_html__( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -147,7 +166,67 @@ class Neznam_Atproto_Share_Admin {
 		);
 	}
 
-	public function edit_post( $post_id, $post ) {
+	/**
+	 * Validate handle
+	 *
+	 * @param string $handle Handle to validate, without @.
+	 *
+	 * @return mixed
+	 */
+	public function check_handle( $handle ) {
+		$nonce = isset( $_POST[ $this->plugin_name . '-nonce' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-nonce' ] ) ) : '';
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->plugin_name . '-save-settings' ) ) {
+			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Nonce is incorrect', 'neznam-atproto-share' ) );
+			return $handle;
+		}
+		if ( ! isset( $_POST[ $this->plugin_name . '-url' ] ) || ! $handle ) {
+			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Required fields are empty', 'neznam-atproto-share' ) );
+			return $handle;
+		}
+		$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
+		$logic->set_url( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
+		$logic->set_handle( $handle );
+		if ( ! $logic->did_request() ) {
+			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Handle is incorrect', 'neznam-atproto-share' ) );
+		}
+		return $handle;
+	}
+
+	/**
+	 * Validate password
+	 *
+	 * @param string $password Password to validate.
+	 *
+	 * @return mixed
+	 */
+	public function check_password( $password ) {
+		$nonce = isset( $_POST[ $this->plugin_name . '-nonce' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-nonce' ] ) ) : '';
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->plugin_name . '-save-settings' ) ) {
+			add_settings_error( $this->plugin_name . '-secret', 'secret', __( 'Nonce is incorrect', 'neznam-atproto-share' ) );
+			return $password;
+		}
+		if ( ! isset( $_POST[ $this->plugin_name . '-url' ] ) || ! isset( $_POST[ $this->plugin_name . '-handle' ] ) || ! $password ) {
+			add_settings_error( $this->plugin_name . '-secret', 'secret', __( 'Required fields are empty', 'neznam-atproto-share' ) );
+			return $password;
+		}
+		$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
+		$logic->set_url( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
+		$logic->set_handle( get_option( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-handle' ] ) ) ) );
+		$did = $logic->did_request();
+		if ( ! $logic->auth_request( $did, $password ) ) {
+			add_settings_error( $this->plugin_name . '-secret', 'secret', __( 'Password is incorrect', 'neznam-atproto-share' ) );
+		}
+		return $password;
+	}
+
+	/**
+	 * On save post save the information for reposting on atproto
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return void
+	 */
+	public function edit_post( $post_id ) {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -167,10 +246,15 @@ class Neznam_Atproto_Share_Admin {
 		update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
 	}
 
-	public function add_meta_box( $post_type ) {
+	/**
+	 * Add meta box to post
+	 *
+	 * @return void
+	 */
+	public function add_meta_box() {
 		add_meta_box(
 			$this->plugin_name . '-meta-box',
-			'Atproto Share',
+			__( 'Atproto Share', 'neznam-atproto-share' ),
 			array(
 				$this,
 				'render_meta_box',
@@ -181,6 +265,11 @@ class Neznam_Atproto_Share_Admin {
 		);
 	}
 
+	/**
+	 * Render meta box
+	 *
+	 * @return void
+	 */
 	public function render_meta_box() {
 		$should_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-should-publish', true );
 		if ( false === $should_publish ) {
@@ -194,24 +283,31 @@ class Neznam_Atproto_Share_Admin {
 			type="checkbox"
 			value="1" <?php checked( $should_publish ); ?>>
 		<label
-			for="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"><?php esc_html_e( 'Publish on Atproto?', $this->plugin_name ); ?></label>
-		<p class="howto"><?php esc_html_e( 'Publishes post to Atproto network.', $this->plugin_name ); ?></p>
+			for="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"><?php esc_html_e( 'Publish on Atproto?', 'neznam-atproto-share' ); ?></label>
+		<p class="howto"><?php esc_html_e( 'Publishes post to Atproto network.', 'neznam-atproto-share' ); ?></p>
 		<label
-			for="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"><?php esc_html_e( 'Text to publish', $this->plugin_name ); ?></label>
+			for="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"><?php esc_html_e( 'Text to publish', 'neznam-atproto-share' ); ?></label>
 		<input
 			id="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"
 			name="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"
 			type="text"
 			value="<?php echo esc_html( $text_to_publish ); ?>"/>
-		<p class="howto"><?php esc_html_e( 'Text to add as status', $this->plugin_name ); ?></p>
+		<p class="howto"><?php esc_html_e( 'Text to add as status', 'neznam-atproto-share' ); ?></p>
 		<?php wp_nonce_field( 'save-should-publish', $this->plugin_name . 'should-publish-nonce' ); ?>
 		<?php
 	}
 
+	/**
+	 * Create cron schedule
+	 *
+	 * @param mixed $schedules Cron schedules.
+	 *
+	 * @return mixed
+	 */
 	public function cron_schedule( $schedules ) {
 		$schedules[ $this->plugin_name . '-every-minute' ] = array(
 			'interval' => 60,
-			'display'  => __( 'Every minute', $this->plugin_name ),
+			'display'  => __( 'Every minute', 'neznam-atproto-share' ),
 		);
 
 		return $schedules;

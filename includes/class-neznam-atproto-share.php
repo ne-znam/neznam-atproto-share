@@ -13,6 +13,15 @@
  * @subpackage Neznam_Atproto_Share/includes
  * @author     Marko Banušić <mbanusic@gmail.com>
  */
+
+/**
+ * The core plugin class.
+ *
+ * @link       https://nezn.am
+ * @since      1.0.0
+ *
+ * @package    Neznam_Atproto_Share
+ */
 class Neznam_Atproto_Share {
 
 	/**
