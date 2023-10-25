@@ -1,104 +1,108 @@
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Neznam Atproto Share\n"
 "POT-Creation-Date: 2023-10-25 11:49+0200\n"
-"PO-Revision-Date: 2023-10-25 11:48+0200\n"
+"PO-Revision-Date: 2023-10-25 11:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "X-Generator: Poedit 3.4\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: neznam-atproto-share.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 "X-Poedit-SearchPathExcluded-1: vendor\n"
 
 #: admin/class-neznam-atproto-share-admin.php:64
 msgid "Settings"
-msgstr ""
+msgstr "Postavke"
 
 #: admin/class-neznam-atproto-share-admin.php:113
 msgid "Enter your server information to enable posting."
-msgstr ""
+msgstr "Unesite podatke o poslužitelju da biste omogućili objavljivanje."
 
 #: admin/class-neznam-atproto-share-admin.php:127
 msgid "Enter the URL of your provider or leave as is for BlueSky"
-msgstr ""
+msgstr "Unesite URL svog davatelja usluga ili ostavite kakav je za BlueSky"
 
 #: admin/class-neznam-atproto-share-admin.php:150
 msgid ""
 "Enter app password. If using BlueSky visit: <a href=\"https://bsky.app/"
 "settings/app-passwords\" target=\"_blank\">App passwords</a>"
 msgstr ""
+"Unesite lozinku aplikacije. Ako koristite BlueSky posjetite: <a "
+"href=\"https://bsky.app/settings/app-passwords\" target=\"_blank\">lozinke "
+"za aplikacije</a>"
 
 #: admin/class-neznam-atproto-share-admin.php:179
 #: admin/class-neznam-atproto-share-admin.php:205
 msgid "Nonce is incorrect"
-msgstr ""
+msgstr "Nonce je netočna"
 
 #: admin/class-neznam-atproto-share-admin.php:183
 #: admin/class-neznam-atproto-share-admin.php:209
 msgid "Required fields are empty"
-msgstr ""
+msgstr "Obavezna polja su prazna"
 
 #: admin/class-neznam-atproto-share-admin.php:190
 msgid "Handle is incorrect"
-msgstr ""
+msgstr "Korisničko ime nije ispravno"
 
 #: admin/class-neznam-atproto-share-admin.php:217
 msgid "Password is incorrect"
-msgstr ""
+msgstr "Lozinka je neispravna"
 
 #: admin/class-neznam-atproto-share-admin.php:257
 msgid "Atproto Share"
-msgstr ""
+msgstr "Atproto Share"
 
 #: admin/class-neznam-atproto-share-admin.php:286
 msgid "Publish on Atproto?"
-msgstr ""
+msgstr "Objavi na Atproto?"
 
 #: admin/class-neznam-atproto-share-admin.php:287
 msgid "Publishes post to Atproto network."
-msgstr ""
+msgstr "Objavljuje objavu na Atproto mreži."
 
 #: admin/class-neznam-atproto-share-admin.php:289
 msgid "Text to publish"
-msgstr ""
+msgstr "Tekst za objavljivanje"
 
 #: admin/class-neznam-atproto-share-admin.php:295
 msgid "Text to add as status"
-msgstr ""
+msgstr "Tekst koji treba dodati kao status"
 
 #: admin/class-neznam-atproto-share-admin.php:310
 msgid "Every minute"
-msgstr ""
+msgstr "Svake minute"
 
 #. Plugin Name of the plugin/theme
 msgid "Neznam Atproto Share"
-msgstr ""
+msgstr "Neznam Atproto Share"
 
 #. Plugin URI of the plugin/theme
 msgid "https://nezn.am/plugins/neznam-atproto-share"
-msgstr ""
+msgstr "https://nezn.am/plugins/neznam-atproto-share"
 
 #. Description of the plugin/theme
 msgid ""
 "Automatically share to Authenticated Transfer Protocol networks like BlueSky"
 msgstr ""
+"Automatsko dijeljenje s mrežama protokola za provjeru autentičnosti "
+"prijenosa kao što je BlueSky"
 
 #. Author of the plugin/theme
 msgid "Marko Banušić"
-msgstr ""
+msgstr "Marko Banušić"
 
 #. Author URI of the plugin/theme
 msgid "https://nezn.am"
-msgstr ""
+msgstr "https://nezn.am"
