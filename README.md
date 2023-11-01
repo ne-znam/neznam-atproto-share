@@ -18,7 +18,7 @@ We recommend hooking up the cron system to a cron job on your server. You can fi
 
 ## Installation
 
-1. Upload [`neznam-atproto-share.zip`](https://github.com/ne-znam/neznam-atproto-share/releases/download/1.1.0/neznam-atproto-share.zip) in Plugins admin page, or install directly from the plugin search
+1. Upload [`neznam-atproto-share.zip`](https://github.com/ne-znam/neznam-atproto-share/releases/download/1.1.1/neznam-atproto-share.zip) in Plugins admin page, or install directly from the plugin search
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Setup the login information in the Settings -> Writing page
 

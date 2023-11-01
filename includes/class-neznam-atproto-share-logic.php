@@ -87,6 +87,8 @@ class Neznam_Atproto_Share_Logic {
 	public function __construct( $plugin_name, $version ) {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
+		$this->access_token  = get_option( $this->plugin_name . '-access-token' );
+		$this->refresh_token = get_option( $this->plugin_name . '-refresh-token' );
 	}
 
 	/**
@@ -181,6 +183,7 @@ class Neznam_Atproto_Share_Logic {
 		);
 		while ( $q->have_posts() ) {
 			$q->the_post();
+			var_dump( $q->post->ID );
 			$this->post_message( $q->post );
 		}
 	}
@@ -193,10 +196,9 @@ class Neznam_Atproto_Share_Logic {
 	 * @return void
 	 */
 	public function post_message( WP_Post $post ): void {
+	var_dump('post_message');
 		$this->set_url();
 		$this->did           = $this->get_did();
-		$this->access_token  = get_option( $this->plugin_name . '-access-token' );
-		$this->refresh_token = get_option( $this->plugin_name . '-refresh-token' );
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
@@ -207,7 +209,8 @@ class Neznam_Atproto_Share_Logic {
 		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
 
-		$locale = get_locale();
+		$locale = str_replace('_', '-', get_locale());
+
 		$body            = array(
 			'collection' => 'app.bsky.feed.post',
 			'repo'       => $this->did,
@@ -238,8 +241,14 @@ class Neznam_Atproto_Share_Logic {
 				'body'    => wp_json_encode( $body ),
 			)
 		);
+		if ( 200 !== $body['response']['code'] ) {
+			// TODO: Handle error.
+			// add logging for reasone of error
+			// add retry for auth problems
+			return;
+		}
 		$body = json_decode( $body['body'], true );
-
+		var_dump($body);
 		if ( isset( $body['uri'] ) ) {
 			$uri = $body['uri'];
 			update_post_meta( $post->ID, $this->plugin_name . '-uri', $uri );
@@ -255,6 +264,7 @@ class Neznam_Atproto_Share_Logic {
 	 * @return array|false
 	 */
 	public function auth_request( $did, $password ) {
+		var_dump('auth_request');
 		$body = wp_remote_post(
 			trailingslashit( $this->url ) . 'xrpc/com.atproto.server.createSession',
 			array(
@@ -269,11 +279,12 @@ class Neznam_Atproto_Share_Logic {
 				),
 			)
 		);
+		var_dump($body);
 		if ( is_wp_error( $body ) || 200 !== $body['response']['code'] ) {
 			return false;
 		}
 		$body = json_decode( $body['body'], true );
-
+		var_dump($body);
 		return $body;
 	}
 
@@ -283,6 +294,7 @@ class Neznam_Atproto_Share_Logic {
 	 * @return void
 	 */
 	private function authorize() {
+		var_dump('authorize');
 		$this->handle   = get_option( $this->plugin_name . '-handle' );
 		$this->app_pass = get_option( $this->plugin_name . '-secret' );
 		if ( $this->refresh_token ) {
@@ -293,7 +305,9 @@ class Neznam_Atproto_Share_Logic {
 			$this->did = $this->get_did( $this->handle );
 		}
 		$body = $this->auth_request( $this->did, $this->app_pass );
-
+		if ( ! $body ) {
+			return;
+		}
 		$this->access_token  = $body['accessJwt'];
 		$this->refresh_token = $body['refreshJwt'];
 		update_option( $this->plugin_name . '-access-token', $this->access_token );
