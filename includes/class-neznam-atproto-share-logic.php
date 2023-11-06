@@ -183,7 +183,6 @@ class Neznam_Atproto_Share_Logic {
 		);
 		while ( $q->have_posts() ) {
 			$q->the_post();
-			var_dump( $q->post->ID );
 			$this->post_message( $q->post );
 		}
 	}
@@ -196,7 +195,6 @@ class Neznam_Atproto_Share_Logic {
 	 * @return void
 	 */
 	public function post_message( WP_Post $post ): void {
-	var_dump('post_message');
 		$this->set_url();
 		$this->did           = $this->get_did();
 		if ( ! $this->access_token ) {
@@ -248,7 +246,6 @@ class Neznam_Atproto_Share_Logic {
 			return;
 		}
 		$body = json_decode( $body['body'], true );
-		var_dump($body);
 		if ( isset( $body['uri'] ) ) {
 			$uri = $body['uri'];
 			update_post_meta( $post->ID, $this->plugin_name . '-uri', $uri );
@@ -264,7 +261,6 @@ class Neznam_Atproto_Share_Logic {
 	 * @return array|false
 	 */
 	public function auth_request( $did, $password ) {
-		var_dump('auth_request');
 		$body = wp_remote_post(
 			trailingslashit( $this->url ) . 'xrpc/com.atproto.server.createSession',
 			array(
@@ -279,12 +275,10 @@ class Neznam_Atproto_Share_Logic {
 				),
 			)
 		);
-		var_dump($body);
 		if ( is_wp_error( $body ) || 200 !== $body['response']['code'] ) {
 			return false;
 		}
 		$body = json_decode( $body['body'], true );
-		var_dump($body);
 		return $body;
 	}
 
@@ -294,7 +288,6 @@ class Neznam_Atproto_Share_Logic {
 	 * @return void
 	 */
 	private function authorize() {
-		var_dump('authorize');
 		$this->handle   = get_option( $this->plugin_name . '-handle' );
 		$this->app_pass = get_option( $this->plugin_name . '-secret' );
 		if ( $this->refresh_token ) {
