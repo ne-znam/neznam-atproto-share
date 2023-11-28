@@ -85,8 +85,8 @@ class Neznam_Atproto_Share_Logic {
 	 * @param string $version Version of the plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-		$this->plugin_name = $plugin_name;
-		$this->version     = $version;
+		$this->plugin_name   = $plugin_name;
+		$this->version       = $version;
 		$this->access_token  = get_option( $this->plugin_name . '-access-token' );
 		$this->refresh_token = get_option( $this->plugin_name . '-refresh-token' );
 	}
@@ -164,6 +164,10 @@ class Neznam_Atproto_Share_Logic {
 	 * @return void
 	 */
 	public function cron() {
+		$use_cron = get_option( $this->plugin_name . '-use-cron' );
+		if ( ! $use_cron ) {
+			return;
+		}
 		$q = new WP_Query(
 			array(
 				'post_type'      => 'any',
@@ -196,7 +200,7 @@ class Neznam_Atproto_Share_Logic {
 	 */
 	public function post_message( WP_Post $post ): void {
 		$this->set_url();
-		$this->did           = $this->get_did();
+		$this->did = $this->get_did();
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
@@ -207,9 +211,9 @@ class Neznam_Atproto_Share_Logic {
 		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
 
-		$locale = str_replace('_', '-', get_locale());
+		$locale = str_replace( '_', '-', get_locale() );
 
-		$body            = array(
+		$body = array(
 			'collection' => 'app.bsky.feed.post',
 			'repo'       => $this->did,
 			'record'     => array(
@@ -240,9 +244,6 @@ class Neznam_Atproto_Share_Logic {
 			)
 		);
 		if ( 200 !== $body['response']['code'] ) {
-			// TODO: Handle error.
-			// add logging for reasone of error
-			// add retry for auth problems
 			return;
 		}
 		$body = json_decode( $body['body'], true );

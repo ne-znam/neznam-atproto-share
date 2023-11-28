@@ -4,8 +4,8 @@ Donate link: https://nezn.am
 Tags: atproto, share, bluesky
 Requires at least: 6.0.0
 Requires PHP: 8.0.0
-Tested up to: 6.4
-Stable tag: 1.1.1
+Tested up to: 6.4.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ Yes, you can use this with other ATProto networks. Just make sure you have the c
 2. This screen shows the settings page
 
 == Changelog ==
+
+= 1.2.0 =
+* Added option to post on publish
 
 = 1.1.0 =
 * Fixed the locale of post thanks to @delirehberi

@@ -106,6 +106,14 @@ class Neznam_Atproto_Share_Admin {
 				'default'           => '1',
 			)
 		);
+		register_setting(
+			'writing',
+			$this->plugin_name . '-use-cron',
+			array(
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '0',
+			)
+		);
 		add_settings_section(
 			$this->plugin_name . '-section',
 			'Atproto Share settings',
@@ -159,6 +167,19 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-default" value="1" <?php checked( 1, get_option( $this->plugin_name . '-default' ), true ); ?> />
+				<?php
+			},
+			'writing',
+			$this->plugin_name . '-section'
+		);
+
+		add_settings_field(
+			$this->plugin_name . '-default',
+			'Use cron for sharing',
+			function () {
+				?>
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-use-cron" value="1" <?php checked( 1, get_option( $this->plugin_name . '-use-cron' ), true ); ?> />
+				<small>Check this if you have trouble publishing posts. This will use cronjob to publish.</small>
 				<?php
 			},
 			'writing',
@@ -220,7 +241,7 @@ class Neznam_Atproto_Share_Admin {
 	}
 
 	/**
-	 * On save post save the information for reposting on atproto
+	 * On save post save the information for reposting on atproto.
 	 *
 	 * @param int $post_id Post ID.
 	 *
@@ -244,6 +265,14 @@ class Neznam_Atproto_Share_Admin {
 
 		update_post_meta( $post_id, $this->plugin_name . '-should-publish', $should_publish );
 		update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
+
+		if ( get_post_status( $post_id ) === 'publish' ) {
+			$use_cron = get_option( $this->plugin_name . '-use-cron' );
+			if ( ! $use_cron ) {
+				$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
+				$logic->post_message( get_post( $post_id ) );
+			}
+		}
 	}
 
 	/**
