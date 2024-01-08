@@ -10,7 +10,7 @@
  * Plugin Name:       Neznam Atproto Share
  * Plugin URI:        https://nezn.am/plugins/neznam-atproto-share
  * Description:       Automatically share to Authenticated Transfer Protocol networks like BlueSky
- * Version:           1.2.0
+ * Version:           1.2.1
  * Author:            Marko Banušić
  * Author URI:        https://nezn.am
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ define( 'NEZNAM_ATPROTO_SHARE_VERSION', '1.2.0' );
  * The code that runs during plugin activation.
  * This action is documented in includes/class-neznam-atproto-share-activator.php
  */
-function activate_neznam_atproto_share() {
+function neznam_atproto_share_activate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-neznam-atproto-share-activator.php';
 	Neznam_Atproto_Share_Activator::activate();
 }
@@ -44,13 +44,13 @@ function activate_neznam_atproto_share() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-neznam-atproto-share-deactivator.php
  */
-function deactivate_neznam_atproto_share() {
+function neznam_atproto_share_deactivate_() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-neznam-atproto-share-deactivator.php';
 	Neznam_Atproto_Share_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_neznam_atproto_share' );
-register_deactivation_hook( __FILE__, 'deactivate_neznam_atproto_share' );
+register_activation_hook( __FILE__, 'neznam_atproto_share_activate' );
+register_deactivation_hook( __FILE__, 'neznam_atproto_share_deactivate' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -67,10 +67,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-neznam-atproto-share.php';
  *
  * @since    1.0.0
  */
-function run_neznam_atproto_share() {
+function neznam_atproto_share_run() {
 
 	$plugin = new Neznam_Atproto_Share();
 	$plugin->run();
 }
 
-run_neznam_atproto_share();
+neznam_atproto_share_run();
