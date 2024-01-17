@@ -10,3 +10,5 @@ composer.json
 composer.lock
 .editorconfig
 .gitattributes
+README.md
+SECURITY.md
