@@ -44,7 +44,7 @@ function neznam_atproto_share_activate() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-neznam-atproto-share-deactivator.php
  */
-function neznam_atproto_share_deactivate_() {
+function neznam_atproto_share_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-neznam-atproto-share-deactivator.php';
 	Neznam_Atproto_Share_Deactivator::deactivate();
 }
