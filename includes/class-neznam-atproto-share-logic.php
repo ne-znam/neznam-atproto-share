@@ -244,6 +244,7 @@ class Neznam_Atproto_Share_Logic {
 			)
 		);
 		if ( 200 !== $body['response']['code'] ) {
+			// TODO: Log error.
 			return;
 		}
 		$body = json_decode( $body['body'], true );
