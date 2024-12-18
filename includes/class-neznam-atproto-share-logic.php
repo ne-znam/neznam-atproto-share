@@ -79,6 +79,13 @@ class Neznam_Atproto_Share_Logic {
 	private string $refresh_token = '';
 
 	/**
+	 * Has a refresh been attempted.
+	 *
+	 * @var bool $refresh_attempted Track if an attempt has been made to refresh the token.
+	 */
+	private bool $refresh_attempted = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $plugin_name Name of the plugin.
@@ -244,6 +251,13 @@ class Neznam_Atproto_Share_Logic {
 			)
 		);
 		if ( 200 !== $body['response']['code'] ) {
+			$response = isset( $body['body'] ) ? json_decode( $body['body'], true ) : array();
+			if ( ! $this->refresh_attempted && isset( $response['error'] ) && 'ExpiredToken' === $response['error'] ) {
+				$this->refresh_token();
+				$this->refresh_attempted = true;
+				$this->post_message( $post );
+				return;
+			}
 			// TODO: Log error.
 			return;
 		}
