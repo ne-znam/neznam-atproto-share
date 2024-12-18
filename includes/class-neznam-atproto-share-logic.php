@@ -224,7 +224,7 @@ class Neznam_Atproto_Share_Logic {
 			'collection' => 'app.bsky.feed.post',
 			'repo'       => $this->did,
 			'record'     => array(
-				'text'      => $text_to_publish ?? $post->post_title,
+				'text'      => ! empty( $text_to_publish ) ? $text_to_publish : $post->post_title,
 				'createdAt' => gmdate( 'c' ),
 				'embed'     => array(
 					'$type'    => 'app.bsky.embed.external',
