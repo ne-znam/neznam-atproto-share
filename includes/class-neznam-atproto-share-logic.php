@@ -109,6 +109,9 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $url ) {
 			$url = get_option( $this->plugin_name . '-url' );
 		}
+		if ( empty( $url ) ) {
+			$url = 'https://bsky.social/';
+		}
 		$this->url = $url;
 	}
 
