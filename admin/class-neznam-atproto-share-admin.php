@@ -267,8 +267,8 @@ class Neznam_Atproto_Share_Admin {
 		update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
 
 		if ( get_post_status( $post_id ) === 'publish' ) {
-			$use_cron = get_option( $this->plugin_name . '-use-cron' );
-			$share_info = get_post_meta($post_id, $this->plugin_name . '-uri', true);
+			$use_cron   = get_option( $this->plugin_name . '-use-cron' );
+			$share_info = get_post_meta( $post_id, $this->plugin_name . '-uri', true );
 			if ( ! $use_cron && ! $share_info ) {
 				$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
 				$logic->post_message( get_post( $post_id ) );
@@ -302,13 +302,13 @@ class Neznam_Atproto_Share_Admin {
 	 */
 	public function render_meta_box() {
 		$uri = get_post_meta( get_the_ID(), $this->plugin_name . '-uri', true );
-		if ($uri) {
-			$uri = explode('/', $uri);
-			$id = array_pop($uri);
-			$handle = get_option($this->plugin_name . '-handle');
+		if ( $uri ) {
+			$uri    = explode( '/', $uri );
+			$id     = array_pop( $uri );
+			$handle = get_option( $this->plugin_name . '-handle' );
 			?>
 			<p><?php esc_html_e( 'Published on Atproto', 'neznam-atproto-share' ); ?></p>
-			<p><a href="<?php echo esc_url('https://bsky.app/profile/' . $handle . '/post/' . $id); ?>" target="_blank" rel="noreferrer"><?php esc_html_e('View on Bluesky', 'neznam-atproto-share'); ?></a></p>
+			<p><a href="<?php echo esc_url( 'https://bsky.app/profile/' . $handle . '/post/' . $id ); ?>" target="_blank" rel="noreferrer"><?php esc_html_e( 'View on Bluesky', 'neznam-atproto-share' ); ?></a></p>
 			<?php
 			return;
 		}

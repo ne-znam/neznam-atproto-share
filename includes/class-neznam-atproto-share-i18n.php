@@ -32,7 +32,7 @@ class Neznam_Atproto_Share_I18n {
 		load_plugin_textdomain(
 			'neznam-atproto-share',
 			false,
-			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
+			dirname( plugin_basename( __FILE__ ), 2 ) . '/languages/'
 		);
 	}
 }
