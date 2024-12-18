@@ -12,3 +12,4 @@ composer.lock
 .gitattributes
 README.md
 SECURITY.md
+phpcs.xml
