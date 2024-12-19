@@ -38,3 +38,4 @@ delete_option( $plugin_name . '-default' );
 delete_option( $plugin_name . '-access-token' );
 delete_option( $plugin_name . '-refresh-token' );
 delete_option( $plugin_name . '-use-cron' );
+delete_option( $plugin_name . '-debug-level' );
