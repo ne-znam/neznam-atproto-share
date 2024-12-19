@@ -110,8 +110,16 @@ class Neznam_Atproto_Share_Admin {
 			'writing',
 			$this->plugin_name . '-use-cron',
 			array(
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => array( $this, 'adjust_cron' ),
 				'default'           => '0',
+			)
+		);
+		register_setting(
+			'writing',
+			$this->plugin_name . '-debug-level',
+			array(
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'ERROR',
 			)
 		);
 		add_settings_section(
@@ -155,7 +163,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
-				<small><?php echo esc_html__( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
+				<small><?php echo wp_kses( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -174,12 +182,39 @@ class Neznam_Atproto_Share_Admin {
 		);
 
 		add_settings_field(
-			$this->plugin_name . '-default',
+			$this->plugin_name . '-use-cron',
 			'Use cron for sharing',
 			function () {
 				?>
 				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-use-cron" value="1" <?php checked( 1, get_option( $this->plugin_name . '-use-cron' ), true ); ?> />
 				<small>Check this if you have trouble publishing posts. This will use cronjob to publish.</small>
+				<?php
+			},
+			'writing',
+			$this->plugin_name . '-section'
+		);
+
+		add_settings_field(
+			$this->plugin_name . '-debug-level',
+			'Debug Level',
+			function () {
+				$cur_level = get_option( $this->plugin_name . '-debug-level' );
+				if ( empty( $cur_level ) ) {
+					$cur_level = 'ERROR';
+				}
+				$levels = array( 'FATAL', 'ERROR', 'WARN', 'INFO', 'DEBUG' );
+				?>
+				<select name="<?php echo esc_html( $this->plugin_name ); ?>-debug-level">
+				<?php foreach ( $levels as $level ) { ?>
+					<option value="<?php echo esc_html( $level ); ?>" 
+												<?php
+												if ( $cur_level === $level ) {
+													echo 'selected="selected"';}
+												?>
+					><?php echo esc_html( ucfirst( strtolower( $level ) ) ); ?></option>
+				<?php } ?>
+				</select>
+				<small>Adjusts the amount of details written to <a href="https://developer.wordpress.org/advanced-administration/debug/debug-wordpress" target="_blank">WordPress' Debug system</a>.</small>
 				<?php
 			},
 			'writing',
@@ -195,6 +230,10 @@ class Neznam_Atproto_Share_Admin {
 	 * @return mixed
 	 */
 	public function check_handle( $handle ) {
+		$prev_handle = get_option( $this->plugin_name . '-handle' );
+		if ( $handle === $prev_handle ) {
+			return $prev_handle;
+		}
 		$nonce = isset( $_POST[ $this->plugin_name . '-nonce' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-nonce' ] ) ) : '';
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->plugin_name . '-save-settings' ) ) {
 			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Nonce is incorrect', 'neznam-atproto-share' ) );
@@ -205,7 +244,7 @@ class Neznam_Atproto_Share_Admin {
 			return $handle;
 		}
 		$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
-		$logic->set_url( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
+		$logic->set_url( sanitize_url( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
 		$logic->set_handle( $handle );
 		if ( ! $logic->did_request() ) {
 			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Handle is incorrect', 'neznam-atproto-share' ) );
@@ -221,6 +260,10 @@ class Neznam_Atproto_Share_Admin {
 	 * @return mixed
 	 */
 	public function check_password( $password ) {
+		$prev_password = get_option( $this->plugin_name . '-secret' );
+		if ( $password === $prev_password ) {
+			return $prev_password;
+		}
 		$nonce = isset( $_POST[ $this->plugin_name . '-nonce' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-nonce' ] ) ) : '';
 		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->plugin_name . '-save-settings' ) ) {
 			add_settings_error( $this->plugin_name . '-secret', 'secret', __( 'Nonce is incorrect', 'neznam-atproto-share' ) );
@@ -231,13 +274,38 @@ class Neznam_Atproto_Share_Admin {
 			return $password;
 		}
 		$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
-		$logic->set_url( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
+		$logic->set_url( sanitize_url( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
 		$logic->set_handle( get_option( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-handle' ] ) ) ) );
 		$did = $logic->did_request();
 		if ( ! $logic->auth_request( $did, $password ) ) {
 			add_settings_error( $this->plugin_name . '-secret', 'secret', __( 'Password is incorrect', 'neznam-atproto-share' ) );
 		}
 		return $password;
+	}
+
+	/**
+	 * Determine if the cron should be enabled or disabled
+	 *
+	 * @param string $cron_setting Checkbox for cron being enabled.
+	 *
+	 * @return mixed
+	 */
+	public function adjust_cron( $cron_setting ) {
+		$cron_setting = isset( $_POST[ $this->plugin_name . '-use-cron' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-use-cron' ] ) ) : false;
+		$nonce        = isset( $_POST[ $this->plugin_name . '-nonce' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-nonce' ] ) ) : '';
+		if ( ! $nonce || ! wp_verify_nonce( $nonce, $this->plugin_name . '-save-settings' ) ) {
+			add_settings_error( $this->plugin_name . '-secret', 'secret', __( 'Nonce is incorrect', 'neznam-atproto-share' ) );
+			return $cron_setting;
+		}
+		$timestamp = wp_next_scheduled( 'neznam-atproto-share_cron' );
+		if ( empty( $cron_setting ) ) {
+			if ( $timestamp ) {
+				wp_unschedule_event( $timestamp, 'neznam-atproto-share_cron' );
+			}
+		} elseif ( ! $timestamp ) {
+				wp_schedule_event( time(), 'neznam-atproto-share-every-minute', 'neznam-atproto-share_cron' );
+		}
+		return $cron_setting;
 	}
 
 	/**
@@ -265,14 +333,36 @@ class Neznam_Atproto_Share_Admin {
 
 		update_post_meta( $post_id, $this->plugin_name . '-should-publish', $should_publish );
 		update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
+	}
 
-		if ( get_post_status( $post_id ) === 'publish' ) {
-			$use_cron   = get_option( $this->plugin_name . '-use-cron' );
-			$share_info = get_post_meta( $post_id, $this->plugin_name . '-uri', true );
-			if ( ! $use_cron && ! $share_info ) {
-				$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
-				$logic->post_message( get_post( $post_id ) );
-			}
+	/**
+	 * On save post save the information for reposting on atproto.
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post The Post itself.
+	 *
+	 * @return void
+	 */
+	public function publish_post( $post_id, $post ) {
+		if ( get_post_status( $post_id ) !== 'publish' ) {
+			return;
+		}
+
+		$use_cron = get_option( $this->plugin_name . '-use-cron' );
+		if ( $use_cron ) {
+			return;
+		}
+
+		$share_info = get_post_meta( $post_id, $this->plugin_name . '-uri', true );
+		if ( $share_info ) {
+			return;
+		}
+
+		$should_publish = get_post_meta( $post_id, $this->plugin_name . '-should-publish', true );
+
+		if ( $should_publish ) {
+			$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
+			$logic->post_message( $post );
 		}
 	}
 
@@ -313,7 +403,8 @@ class Neznam_Atproto_Share_Admin {
 			return;
 		}
 		$should_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-should-publish', true );
-		if ( false === $should_publish ) {
+
+		if ( false === $should_publish || '' === $should_publish ) {
 			$should_publish = get_option( $this->plugin_name . '-default' );
 		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
