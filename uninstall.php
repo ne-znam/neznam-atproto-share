@@ -28,3 +28,13 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+$plugin_name = 'neznam-atproto-share';
+
+delete_option( $plugin_name . '-url' );
+delete_option( $plugin_name . '-handle' );
+delete_option( $plugin_name . '-secret' );
+delete_option( $plugin_name . '-default' );
+delete_option( $plugin_name . '-access-token' );
+delete_option( $plugin_name . '-refresh-token' );
+delete_option( $plugin_name . '-use-cron' );

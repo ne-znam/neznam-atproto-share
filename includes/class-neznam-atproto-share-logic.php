@@ -86,6 +86,13 @@ class Neznam_Atproto_Share_Logic {
 	private bool $refresh_attempted = false;
 
 	/**
+	 * Debug level that is worth writing to log.
+	 *
+	 * @var string $debug_level Level of debug worth logging.
+	 */
+	private string $debug_level = '';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $plugin_name Name of the plugin.
@@ -110,6 +117,7 @@ class Neznam_Atproto_Share_Logic {
 			$url = get_option( $this->plugin_name . '-url' );
 		}
 		if ( empty( $url ) ) {
+			$this->log( 'DEBUG', 'Option value of URL not present. Defaulting to https://bsky.social/' );
 			$url = 'https://bsky.social/';
 		}
 		$this->url = $url;
@@ -137,15 +145,17 @@ class Neznam_Atproto_Share_Logic {
 	public function did_request() {
 		$body = wp_remote_get( trailingslashit( $this->url ) . 'xrpc/com.atproto.identity.resolveHandle?handle=' . $this->handle );
 		if ( is_wp_error( $body ) ) {
+			$this->log( 'FATAL', $body );
 			return false;
 		}
-		$body = json_decode( $body['body'], true );
-		$did  = $body['did'];
-		if ( $did ) {
-			update_option( $this->plugin_name . '-did', $did );
-
-			return $did;
+		$response_body = $body['body'];
+		$body          = json_decode( $body['body'], true );
+		if ( $this->validate_did( $body['did'] ) ) {
+			$this->log( 'DEBUG', 'Successfully validated DID.' );
+			update_option( $this->plugin_name . '-did', $body['did'] );
+			return $body['did'];
 		}
+		$this->log( 'ERROR', 'Received an invalid DID from resolve handle. Body of response: ' . esc_html( $response_body ) );
 		return false;
 	}
 
@@ -174,10 +184,7 @@ class Neznam_Atproto_Share_Logic {
 	 * @return void
 	 */
 	public function cron() {
-		$use_cron = get_option( $this->plugin_name . '-use-cron' );
-		if ( ! $use_cron ) {
-			return;
-		}
+		$this->log( 'DEBUG', 'Running cron to auto-post recent published posts.' );
 		$q = new WP_Query(
 			array(
 				'post_type'      => 'any',
@@ -256,18 +263,22 @@ class Neznam_Atproto_Share_Logic {
 		if ( 200 !== $body['response']['code'] ) {
 			$response = isset( $body['body'] ) ? json_decode( $body['body'], true ) : array();
 			if ( ! $this->refresh_attempted && isset( $response['error'] ) && 'ExpiredToken' === $response['error'] ) {
+				$this->log( 'INFO', 'When attempting to post, received response of expired token. Refreshing token.' );
 				$this->refresh_token();
 				$this->refresh_attempted = true;
 				$this->post_message( $post );
 				return;
 			}
-			// TODO: Log error.
+			$this->log( 'ERROR', 'Received a non-200 ( ' . esc_html( $body['response']['code'] ) . ')  response code from create record. Body of response: ' . esc_html( $body['body'] ) );
 			return;
 		}
-		$body = json_decode( $body['body'], true );
-		if ( isset( $body['uri'] ) ) {
-			$uri = $body['uri'];
-			update_post_meta( $post->ID, $this->plugin_name . '-uri', $uri );
+		$response_body = $body['body'];
+		$body          = json_decode( $response_body, true );
+		if ( isset( $body['uri'] ) && $this->validate_at_uri( $body['uri'] ) ) {
+			update_post_meta( $post->ID, $this->plugin_name . '-uri', $body['uri'] );
+			$this->log( 'DEBUG', 'Record successfully created. URI is ' . esc_html( $body['uri'] ) );
+		} else {
+			$this->log( 'ERROR', 'Failed to create record. Response from server: ' . esc_html( $response_body ) );
 		}
 	}
 
@@ -294,10 +305,20 @@ class Neznam_Atproto_Share_Logic {
 				),
 			)
 		);
-		if ( is_wp_error( $body ) || 200 !== $body['response']['code'] ) {
+		if ( is_wp_error( $body ) ) {
+			$this->log( 'FATAL', $body );
 			return false;
 		}
-		$body = json_decode( $body['body'], true );
+		if ( 200 !== $body['response']['code'] ) {
+			$this->log( 'ERROR', 'Received a non-200 ( ' . esc_html( $body['response']['code'] ) . ')  response code from create session. Body of response: ' . esc_html( $body['body'] ) );
+			return false;
+		}
+		$response_body = $body['body'];
+		$body          = json_decode( $response_body, true );
+		if ( ! $this->validate_jwt( $body['accessJwt'] ) || ! $this->validate_jwt( $body['refreshJwt'] ) ) {
+			$this->log( 'ERROR', 'Received invalid JWT tokens from create session. Body of response: ' . esc_html( $response_body ) );
+			return false;
+		}
 		return $body;
 	}
 
@@ -320,6 +341,7 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $body ) {
 			return;
 		}
+		$this->log( 'DEBUG', 'JWT tokens successfully retrieved from auth request.' );
 		$this->access_token  = $body['accessJwt'];
 		$this->refresh_token = $body['refreshJwt'];
 		update_option( $this->plugin_name . '-access-token', $this->access_token );
@@ -346,11 +368,19 @@ class Neznam_Atproto_Share_Logic {
 			)
 		);
 		if ( 200 !== $body['response']['code'] ) {
+			$this->log( 'INFO', 'Received a non-200 ( ' . esc_html( $body['response']['code'] ) . ')  response code from refresh token. Attempting to reauthorize. Body of response: ' . esc_html( $body['body'] ) );
 			$this->refresh_token = '';
 			$this->authorize();
 			return;
 		}
-		$body                = json_decode( $body['body'], true );
+		$body = json_decode( $body['body'], true );
+		if ( ! $this->validate_jwt( $body['accessJwt'] ) || ! $this->validate_jwt( $body['refreshJwt'] ) ) {
+			$this->log( 'WARN', 'Either the Access JWT or Refresh JWT are not valid. Attempting token refresh.' );
+			$this->refresh_token = '';
+			$this->authorize();
+			return;
+		}
+		$this->log( 'DEBUG', 'JWT tokens successfully refreshed.' );
 		$this->access_token  = $body['accessJwt'];
 		$this->refresh_token = $body['refreshJwt'];
 		update_option( $this->plugin_name . '-access-token', $this->access_token );
@@ -387,14 +417,132 @@ class Neznam_Atproto_Share_Logic {
 			)
 		);
 		if ( 200 !== $body['response']['code'] ) {
+			$this->log( 'INFO', 'Received a non-200 ( ' . esc_html( $body['response']['code'] ) . ')  response code from upload blob. Attempting token refresh. Body of response: ' . esc_html( $body['body'] ) );
 			$this->access_token = '';
 			$this->refresh_token();
 
 			return $this->upload_blob( $path );
 		}
 		$body = json_decode( $body['body'], true );
-
+		$this->log( 'DEBUG', 'Blob successfully uploaded.' );
 		return $body['blob'];
+	}
+
+	/**
+	 * Determine if the DID provided by the server is valid.
+	 *
+	 * @param string $did The did to be validated.
+	 *
+	 * @return bool If the $did matches the allowed spec.
+	 */
+	private function validate_did( $did ) {
+		// Derived from DID Syntax published at https://atproto.com/specs/did.
+
+		// Skip potential PHP regex DoS by confirming string length in under spec max (2kb).
+		if ( strlen( $did ) > 2048 ) {
+			$this->log( 'WARN', 'Received a DID of ' . strlen( $jwt ) . ', which should not happen.' );
+			return false;
+		}
+
+		return ! ! preg_match( '/^did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-]$/', $did );
+	}
+
+	/**
+	 * Determine if the at-proto URI provided by the server is valid.
+	 *
+	 * @param string $uri The URI to be validated.
+	 *
+	 * @return bool If the $uri matches the allowed spec.
+	 */
+	private function validate_at_uri( $uri ) {
+		// Derived from URI Syntax published at https://atproto.com/specs/at-uri-scheme.
+
+		// Skip potential PHP regex DoS by confirming string length in under spec max (8kb).
+		if ( strlen( $uri ) > 8192 ) {
+			$this->log( 'WARN', 'Received an AT URI of ' . strlen( $jwt ) . ', which should not happen.' );
+			return false;
+		}
+
+		return ! ! preg_match( '@^at://(?:(did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-])|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))(/([a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)(/[a-zA-Z0-9._~-]+)?)?$@', $uri );
+	}
+
+	/**
+	 * Determine if the JWT provided by the server is valid.
+	 *
+	 * @param string $jwt The JWT to be validated.
+	 *
+	 * @return bool If the $jwt is formatted properly.
+	 */
+	private function validate_jwt( $jwt ) {
+		// Derived from URI Syntax published at https://atproto.com/specs/at-uri-scheme.
+
+		// Assume any JWT longer than 16k is invalid because it won't be accepted in a HTTP header.
+		if ( strlen( $jwt ) > 16384 ) {
+			$this->log( 'WARN', 'Received a JWT of ' . strlen( $jwt ) . ', which should not happen.' );
+			return false;
+		}
+		return ! ! preg_match( '/^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/', $jwt );
+	}
+
+	/**
+	 * Debug logging for understanding upstraing interactions.
+	 * NOTE: This requires WP_DEBUG to be enabled.
+	 *
+	 * @param string $log_level Must be either FATAL, ERROR, WARN, INFO or DEBUG.
+	 * @param mixed  $message Output to be written to the error log.
+	 */
+	private function log( $log_level, $message ) {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
+		if ( '' === $this->debug_level ) {
+			$this->debug_level = get_option( $this->plugin_name . '-debug-level' );
+			if ( empty( $this->debug_level ) ) {
+				$this->debug_level = 'ERROR';
+			}
+		}
+		$message_level  = $this->level_mapping( $log_level );
+		$required_level = $this->level_mapping( $this->debug_level );
+		if ( $message_level > $required_level ) {
+			return;
+		}
+
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions
+		$log_message = '[NeZnam ATProto Share] - ' . $log_level . ' - ';
+		if ( is_string( $message ) ) {
+			$log_message .= $message;
+		} else {
+			$log_message .= print_r( $message, true );
+		}
+		error_log( $log_message );
+		// phpcs:enable
+	}
+
+	/**
+	 * Helper function to cast log level to a numeric.
+	 *
+	 * @param string $log_level Must be either FATAL, ERROR, WARN, INFO or DEBUG.
+	 *
+	 * @return int Lower the number, higher the priority.
+	 */
+	private function level_mapping( $log_level ) {
+		if ( 'FATAL' === $log_level ) {
+			return 0;
+		}
+		if ( 'ERROR' === $log_level ) {
+			return 1;
+		}
+		if ( 'WARN' === $log_level ) {
+			return 2;
+		}
+		if ( 'INFO' === $log_level ) {
+			return 3;
+		}
+		if ( 'DEBUG' === $log_level ) {
+			return 4;
+		}
+		return 99;
 	}
 
 	/**
