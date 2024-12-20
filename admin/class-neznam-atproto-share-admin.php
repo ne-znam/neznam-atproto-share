@@ -140,7 +140,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="text" name="<?php echo esc_html( $this->plugin_name ); ?>-url" value="<?php echo esc_html( get_option( $this->plugin_name . '-url' ) ); ?>" /><br>
-				<small><?php esc_html__( 'Enter the URL of your provider or leave as is for BlueSky', 'neznam-atproto-share' ); ?></small>
+				<small><?php esc_html_e( 'Enter the URL of your provider or leave as is for BlueSky', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
