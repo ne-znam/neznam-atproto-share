@@ -163,7 +163,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
-				<small><?php echo wp_kses( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
+				<small><?php esc_html_e( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -175,6 +175,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-default" value="1" <?php checked( 1, get_option( $this->plugin_name . '-default' ), true ); ?> />
+				<small><?php esc_html_e( 'Enable this option to always push posts and publish.', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -187,7 +188,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-use-cron" value="1" <?php checked( 1, get_option( $this->plugin_name . '-use-cron' ), true ); ?> />
-				<small>Check this if you have trouble publishing posts. This will use cronjob to publish.</small>
+				<small><?php esc_html_e( 'Check this if you have trouble publishing posts. This will use cronjob to publish.', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -206,7 +207,7 @@ class Neznam_Atproto_Share_Admin {
 				?>
 				<select name="<?php echo esc_html( $this->plugin_name ); ?>-debug-level">
 				<?php foreach ( $levels as $level ) { ?>
-					<option value="<?php echo esc_html( $level ); ?>" 
+					<option value="<?php echo esc_html( $level ); ?>"
 												<?php
 												if ( $cur_level === $level ) {
 													echo 'selected="selected"';}
@@ -214,7 +215,7 @@ class Neznam_Atproto_Share_Admin {
 					><?php echo esc_html( ucfirst( strtolower( $level ) ) ); ?></option>
 				<?php } ?>
 				</select>
-				<small>Adjusts the amount of details written to <a href="https://developer.wordpress.org/advanced-administration/debug/debug-wordpress" target="_blank">WordPress' Debug system</a>.</small>
+				<small><?php esc_html_e( "Adjusts the amount of details written to <a href='https://developer.wordpress.org/advanced-administration/debug/debug-wordpress' target='_blank'>WordPress' Debug system</a>.", 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',

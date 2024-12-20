@@ -2,15 +2,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Neznam Atproto Share\n"
-"POT-Creation-Date: 2023-10-25 11:49+0200\n"
-"PO-Revision-Date: 2023-10-25 11:48+0200\n"
+"POT-Creation-Date: 2024-12-20 08:59+0100\n"
+"PO-Revision-Date: 2024-12-20 08:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: neznam-atproto-share.php\n"
@@ -26,59 +26,85 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:113
+#: admin/class-neznam-atproto-share-admin.php:129
 msgid "Enter your server information to enable posting."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:127
+#: admin/class-neznam-atproto-share-admin.php:143
 msgid "Enter the URL of your provider or leave as is for BlueSky"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:150
+#: admin/class-neznam-atproto-share-admin.php:166
 msgid ""
 "Enter app password. If using BlueSky visit: <a href=\"https://bsky.app/"
 "settings/app-passwords\" target=\"_blank\">App passwords</a>"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:179
-#: admin/class-neznam-atproto-share-admin.php:205
+#: admin/class-neznam-atproto-share-admin.php:178
+msgid "Enable this option to always push posts and publish."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:191
+msgid ""
+"Check this if you have trouble publishing posts. This will use cronjob to "
+"publish."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:218
+msgid ""
+"Adjusts the amount of details written to <a href='https://developer."
+"wordpress.org/advanced-administration/debug/debug-wordpress' "
+"target='_blank'>WordPress' Debug system</a>."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:240
+#: admin/class-neznam-atproto-share-admin.php:270
+#: admin/class-neznam-atproto-share-admin.php:298
 msgid "Nonce is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:183
-#: admin/class-neznam-atproto-share-admin.php:209
+#: admin/class-neznam-atproto-share-admin.php:244
+#: admin/class-neznam-atproto-share-admin.php:274
 msgid "Required fields are empty"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:190
+#: admin/class-neznam-atproto-share-admin.php:251
 msgid "Handle is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:217
+#: admin/class-neznam-atproto-share-admin.php:282
 msgid "Password is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:257
+#: admin/class-neznam-atproto-share-admin.php:378
 msgid "Atproto Share"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:286
+#: admin/class-neznam-atproto-share-admin.php:401
+msgid "Published on Atproto"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:402
+msgid "View on Bluesky"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:419
 msgid "Publish on Atproto?"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:287
+#: admin/class-neznam-atproto-share-admin.php:420
 msgid "Publishes post to Atproto network."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:289
+#: admin/class-neznam-atproto-share-admin.php:422
 msgid "Text to publish"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:295
+#: admin/class-neznam-atproto-share-admin.php:428
 msgid "Text to add as status"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:310
+#: admin/class-neznam-atproto-share-admin.php:443
 msgid "Every minute"
 msgstr ""
 
