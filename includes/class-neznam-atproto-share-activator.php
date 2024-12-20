@@ -28,8 +28,5 @@ class Neznam_Atproto_Share_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		if ( ! wp_next_scheduled( 'neznam-atproto-share_cron' ) ) {
-			wp_schedule_event( time(), 'neznam-atproto-share-every-minute', 'neznam-atproto-share_cron' );
-		}
 	}
 }
