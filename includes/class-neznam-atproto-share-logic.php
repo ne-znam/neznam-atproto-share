@@ -444,7 +444,7 @@ class Neznam_Atproto_Share_Logic {
 			return false;
 		}
 
-		return ! ! preg_match( '/^did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-]$/', $did );
+		return (bool) preg_match( '/^did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-]$/', $did );
 	}
 
 	/**
@@ -463,7 +463,7 @@ class Neznam_Atproto_Share_Logic {
 			return false;
 		}
 
-		return ! ! preg_match( '@^at://(?:(did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-])|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))(/([a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)(/[a-zA-Z0-9._~-]+)?)?$@', $uri );
+		return (bool) preg_match( '@^at://(?:(did:[a-z]+:[a-zA-Z0-9._:%-]*[a-zA-Z0-9._-])|([a-zA-Z0-9.-]+\.[a-zA-Z]{2,}))(/([a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)(/[a-zA-Z0-9._~-]+)?)?$@', $uri );
 	}
 
 	/**
@@ -481,7 +481,7 @@ class Neznam_Atproto_Share_Logic {
 			$this->log( 'WARN', 'Received a JWT of ' . strlen( $jwt ) . ', which should not happen.' );
 			return false;
 		}
-		return ! ! preg_match( '/^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/', $jwt );
+		return (bool) preg_match( '/^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/', $jwt );
 	}
 
 	/**

@@ -140,7 +140,7 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="text" name="<?php echo esc_html( $this->plugin_name ); ?>-url" value="<?php echo esc_html( get_option( $this->plugin_name . '-url' ) ); ?>" /><br>
-				<small><?php esc_html_e( 'Enter the URL of your provider or leave as is for BlueSky', 'neznam-atproto-share' ); ?></small>
+				<small><?php esc_html__( 'Enter the URL of your provider or leave as is for BlueSky', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
 			'writing',
@@ -163,7 +163,12 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
-				<small><?php esc_html_e( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
+				<small>
+				<?php
+					esc_html_e( 'Enter app password. ' );
+					echo '<a href="https://bsky.app/settings/app-passwords">' . esc_html__( 'For Bluesky users, visit Bsky.app.', 'neznam-atproto-share' ) . '</a>';
+				?>
+				</small>
 				<?php
 			},
 			'writing',
@@ -215,7 +220,11 @@ class Neznam_Atproto_Share_Admin {
 					><?php echo esc_html( ucfirst( strtolower( $level ) ) ); ?></option>
 				<?php } ?>
 				</select>
-				<small><?php esc_html_e( "Adjusts the amount of details written to <a href='https://developer.wordpress.org/advanced-administration/debug/debug-wordpress' target='_blank'>WordPress' Debug system</a>.", 'neznam-atproto-share' ); ?></small>
+				<small>
+				<?php
+				esc_html_e( 'Adjusts amount of details written to WordPress debug log. Requires WP_DEBUG to be set.', 'neznam-atproto-share' );
+				?>
+				</small>
 				<?php
 			},
 			'writing',
