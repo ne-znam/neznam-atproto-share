@@ -163,7 +163,19 @@ class Neznam_Atproto_Share_Admin {
 			function () {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
-				<small><?php esc_html_e( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ); ?></small>
+				<small>
+				<?php
+				echo wp_kses(
+					__( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				);
+				?>
+					</small>
 				<?php
 			},
 			'writing',
@@ -215,7 +227,19 @@ class Neznam_Atproto_Share_Admin {
 					><?php echo esc_html( ucfirst( strtolower( $level ) ) ); ?></option>
 				<?php } ?>
 				</select>
-				<small><?php esc_html_e( "Adjusts the amount of details written to <a href='https://developer.wordpress.org/advanced-administration/debug/debug-wordpress' target='_blank'>WordPress' Debug system</a>.", 'neznam-atproto-share' ); ?></small>
+				<small>
+				<?php
+				echo wp_kses(
+					__( "Adjusts the amount of details written to <a href='https://developer.wordpress.org/advanced-administration/debug/debug-wordpress' target='_blank'>WordPress' Debug system</a>.", 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				);
+				?>
+						</small>
 				<?php
 			},
 			'writing',
