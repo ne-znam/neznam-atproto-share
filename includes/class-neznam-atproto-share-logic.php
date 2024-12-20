@@ -231,9 +231,9 @@ class Neznam_Atproto_Share_Logic {
 			$post_text = $text_to_publish;
 		} else {
 			$post_format = get_option( $this->plugin_name . '-post-format' );
-			if ( 'post_excerpt' === $post_format ) {
+			if ( ! empty( $post->post_excerpt ) && 'post_excerpt' === $post_format ) {
 				$post_text = $post->post_excerpt;
-			} elseif ( 'post_title_and_excerpt' === $post_format ) {
+			} elseif ( ! empty( $post->post_excerpt ) && 'post_title_and_excerpt' === $post_format ) {
 				$post_text = $post->post_title . ': ' . $post->post_excerpt;
 			} else {
 				$post_text = $post->post_title;
