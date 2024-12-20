@@ -126,7 +126,19 @@ class Neznam_Atproto_Share_Admin {
 			$this->plugin_name . '-section',
 			'Atproto Share settings',
 			function () {
-				echo '<p>' . esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) . '</p>';
+				echo '<p>' .
+				esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) .
+				' (' .
+				wp_kses(
+					__( 'Enjoying this plugin? Please <a href="https://wordpress.org/support/plugin/neznam-atproto-share/reviews/#new-post" target="_blank">leave a review</a> to support its development.', 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				) .
+				')</p>';
 				wp_nonce_field( $this->plugin_name . '-save-settings', $this->plugin_name . '-nonce' );
 			},
 			'writing',
