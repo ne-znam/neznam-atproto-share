@@ -5,7 +5,7 @@ Tags: atproto, share, bluesky
 Requires at least: 6.0.0
 Requires PHP: 8.0.0
 Tested up to: 6.7.0
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,16 @@ Yes, you can use this with other ATProto networks. Just make sure you have the c
 2. This screen shows the settings page
 
 == Changelog ==
+
+= 1.5.0 =
+* All inputs, both provided from /wp-admin/ as well as external sources, are sanitized and have their validity checked (thanks, White Fir)
+* When the plugin is uninstalled, all options are removed
+* The cron task is only setup to run when the option is enabled
+* Separated the checkbox of "should this post" to the save_post action, and "post this, if checked" to the wp_after_insert_post action - this should fix the runtime issue people mentioned
+* Added log output, of various levels, to help people debug
+* Made the "Default to share" functionality visible
+* Fixed the link showing as raw HTML near the admin "Secret" field
+* Stopped redundant calls to the API when values, such as secret and handle, did not change
 
 = 1.4.0 =
 * Fixed token refresh
