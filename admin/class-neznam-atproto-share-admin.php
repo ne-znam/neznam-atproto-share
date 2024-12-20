@@ -126,7 +126,19 @@ class Neznam_Atproto_Share_Admin {
 			$this->plugin_name . '-section',
 			'Atproto Share settings',
 			function () {
-				echo '<p>' . esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) . '</p>';
+				echo '<p>' .
+				esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) .
+				' (' .
+				wp_kses(
+					__( 'Enjoying this plugin? Please  <a href="https://wordpress.org/support/plugin/neznam-atproto-share/reviews/#new-post" target="_blank">leave us a review</a> to support its development.', 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				) .
+				')</p>';
 				wp_nonce_field( $this->plugin_name . '-save-settings', $this->plugin_name . '-nonce' );
 			},
 			'writing',
@@ -165,8 +177,15 @@ class Neznam_Atproto_Share_Admin {
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
 				<small>
 				<?php
-					esc_html_e( 'Enter app password. ' );
-					echo '<a href="https://bsky.app/settings/app-passwords">' . esc_html__( 'For Bluesky users, visit Bsky.app.', 'neznam-atproto-share' ) . '</a>';
+				echo wp_kses(
+					__( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				);
 				?>
 				</small>
 				<?php
@@ -219,10 +238,18 @@ class Neznam_Atproto_Share_Admin {
 												?>
 					><?php echo esc_html( ucfirst( strtolower( $level ) ) ); ?></option>
 				<?php } ?>
-				</select>
+				</select><br>
 				<small>
 				<?php
-				esc_html_e( 'Adjusts amount of details written to WordPress debug log. Requires WP_DEBUG to be set.', 'neznam-atproto-share' );
+				echo wp_kses(
+					__( 'Adjusts amount of details written to <a href="https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/" target="_blank"> WordPress debugging</a>. Requires WP_DEBUG to be set.', 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				);
 				?>
 				</small>
 				<?php
