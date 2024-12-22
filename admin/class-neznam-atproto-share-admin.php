@@ -510,13 +510,4 @@ class Neznam_Atproto_Share_Admin {
 
 		return $schedules;
 	}
-
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.6.0
-	 */
-	public function admin_enqueue_scripts() {
-		wp_register_script( $this->plugin_name . '-comments', plugins_url( 'admin/js/neznam-atproto-share-comments.js', __DIR__ ), array( 'wp-blocks', 'wp-element' ), $this->version, array( 'in_footer' => false ) );
-	}
 }

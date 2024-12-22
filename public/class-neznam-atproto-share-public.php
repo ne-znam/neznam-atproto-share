@@ -151,21 +151,6 @@ class Neznam_Atproto_Share_Public {
 	}
 
 	/**
-	 * Registers the block for letting block-based templates position the comments.
-	 *
-	 * @since     1.6.0
-	 */
-	public function register_block() {
-		register_block_type(
-			'neznam-atproto-share/bluesky-comment',
-			array(
-				'editor_script'   => $this->plugin_name . '-comments',
-				'render_callback' => array( $this, 'pre_get_comments' ),
-			)
-		);
-	}
-
-	/**
 	 * Renders the HTML for the Bluesky-powered comments.
 	 *
 	 * @since     1.6.0

@@ -151,7 +151,6 @@ class Neznam_Atproto_Share {
 		$plugin_share = new Neznam_Atproto_Share_Logic( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_settings' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'admin_enqueue_scripts' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'edit_post', 10, 2 );
 		$this->loader->add_action( 'wp_after_insert_post', $plugin_admin, 'publish_post', 10, 2 );
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_meta_box' );
@@ -165,7 +164,6 @@ class Neznam_Atproto_Share {
 			$plugin_public = new Neznam_Atproto_Share_Public( $this->get_plugin_name(), $this->get_version() );
 			$this->loader->add_action( 'init', $plugin_public, 'register_styles' );
 			$this->loader->add_action( 'init', $plugin_public, 'register_scripts' );
-			$this->loader->add_action( 'init', $plugin_public, 'register_block' );
 			$this->loader->add_filter( 'loop_start', $plugin_public, 'comment_controls' );
 		}
 	}
