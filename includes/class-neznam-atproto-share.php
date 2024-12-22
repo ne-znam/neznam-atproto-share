@@ -71,7 +71,7 @@ class Neznam_Atproto_Share {
 
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->define_admin_hooks();
+		$this->define_hooks();
 	}
 
 	/**
@@ -110,6 +110,11 @@ class Neznam_Atproto_Share {
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-neznam-atproto-share-admin.php';
 
 		/**
+		 * The class responsible for defining all actions that occur in the public area.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'public/class-neznam-atproto-share-public.php';
+
+		/**
 		 * The class responsible for actual posting to atproto.
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'includes/class-neznam-atproto-share-logic.php';
@@ -134,25 +139,35 @@ class Neznam_Atproto_Share {
 	}
 
 	/**
-	 * Register all of the hooks related to the admin area functionality
+	 * Register all of the hooks related to the public and admin area functionality
 	 * of the plugin.
 	 *
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
+	private function define_hooks() {
 
 		$plugin_admin = new Neznam_Atproto_Share_Admin( $this->get_plugin_name(), $this->get_version() );
 		$plugin_share = new Neznam_Atproto_Share_Logic( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_settings' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'admin_enqueue_scripts' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'edit_post', 10, 2 );
 		$this->loader->add_action( 'wp_after_insert_post', $plugin_admin, 'publish_post', 10, 2 );
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_meta_box' );
 		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'cron_schedule' );
-		$this->loader->add_action( $this->plugin_name . '_cron', $plugin_share, 'cron' );
 		$this->loader->add_filter( 'plugin_action_links_' . $this->plugin_name . '/' . $this->plugin_name . '.php', $plugin_admin, 'settings_link' );
+
+		$this->loader->add_action( $this->plugin_name . '_cron', $plugin_share, 'cron' );
 		$this->loader->add_action( 'cli_init', $plugin_share, 'cli' );
+
+		if ( ! empty( get_option( $this->plugin_name . '-comment-override' ) ) ) {
+			$plugin_public = new Neznam_Atproto_Share_Public( $this->get_plugin_name(), $this->get_version() );
+			$this->loader->add_action( 'init', $plugin_public, 'register_styles' );
+			$this->loader->add_action( 'init', $plugin_public, 'register_scripts' );
+			$this->loader->add_action( 'init', $plugin_public, 'register_block' );
+			$this->loader->add_filter( 'loop_start', $plugin_public, 'comment_controls' );
+		}
 	}
 
 	/**
