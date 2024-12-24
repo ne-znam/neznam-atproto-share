@@ -227,6 +227,18 @@ class Neznam_Atproto_Share_Logic {
 			$blob = $this->upload_blob( $image_path );
 		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
+		if ( ! empty( $text_to_publish ) ) {
+			$post_text = $text_to_publish;
+		} else {
+			$post_format = get_option( $this->plugin_name . '-post-format' );
+			if ( ! empty( $post->post_excerpt ) && 'post_excerpt' === $post_format ) {
+				$post_text = $post->post_excerpt;
+			} elseif ( ! empty( $post->post_excerpt ) && 'post_title_and_excerpt' === $post_format ) {
+				$post_text = $post->post_title . ': ' . $post->post_excerpt;
+			} else {
+				$post_text = $post->post_title;
+			}
+		}
 
 		$locale = str_replace( '_', '-', get_locale() );
 
@@ -234,7 +246,7 @@ class Neznam_Atproto_Share_Logic {
 			'collection' => 'app.bsky.feed.post',
 			'repo'       => $this->did,
 			'record'     => array(
-				'text'      => ! empty( $text_to_publish ) ? $text_to_publish : $post->post_title,
+				'text'      => $post_text,
 				'createdAt' => gmdate( 'c' ),
 				'embed'     => array(
 					'$type'    => 'app.bsky.embed.external',
