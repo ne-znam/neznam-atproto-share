@@ -221,7 +221,7 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
-		$image_path = get_attached_file( get_post_thumbnail_id( $post->ID ) );
+		$image_path = get_attached_file( get_post_thumbnail_id( $post->ID ) ); // TODO: Add option to select image and size.
 		$blob       = null;
 		if ( $image_path ) {
 			$blob = $this->upload_blob( $image_path );
@@ -253,7 +253,7 @@ class Neznam_Atproto_Share_Logic {
 					'external' => array(
 						'uri'         => get_the_permalink( $post ),
 						'title'       => $post->post_title,
-						'description' => get_post_meta( $post->ID, 'subtitle', true ),
+						'description' => $post->post_excerpt,
 					),
 				),
 				'langs'     => array( $locale ),
@@ -416,8 +416,13 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $wp_filesystem->exists( $path ) ) {
 			return array();
 		}
-
+		$size = $wp_filesystem->size( $path );
+		if ( $size > 1000000 ) {
+			$this->log( 'WARN', 'File is too large to upload. Skipping.' );
+			return array();
+		}
 		$file = $wp_filesystem->get_contents( $path );
+
 		$body = wp_remote_post(
 			trailingslashit( $this->url ) . 'xrpc/com.atproto.repo.uploadBlob',
 			array(
