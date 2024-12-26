@@ -22,7 +22,7 @@ if ( empty( $handle ) || empty( $bluesky_uri ) ) {
 }
 
 $direct_link = 'https://bsky.app/profile/' . esc_attr( $handle ) . '/post/' . esc_attr( substr( $bluesky_uri, strrpos( $bluesky_uri, '/' ) + 1 ) );
-echo '<div id="neznam-atproto-share-comments" data-uri="' . esc_attr( $bluesky_uri ) . '">
+echo '<div id="comments" class="comments-area neznam-atproto-share-comments" data-block-theme="' . esc_attr( wp_is_block_theme() ) . '" data-uri="' . esc_attr( $bluesky_uri ) . '">
 <svg version="1.1" id="L1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve" style="width:2rem;margin-bottom: -.5rem;">
 	<circle fill="none" stroke="#fff" stroke-width="1" stroke-miterlimit="10" stroke-dasharray="10,10" cx="50" cy="50" r="39">
 		<animateTransform 
