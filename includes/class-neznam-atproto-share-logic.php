@@ -221,7 +221,7 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
-		$image_path = get_attached_file( get_post_thumbnail_id( $post->ID ) ); // TODO: Add option to select image and size.
+		$image_path = get_the_post_thumbnail_url( $post->ID, 'large' );// TODO: Add option to select image and size.
 		$blob       = null;
 		if ( $image_path ) {
 			$blob = $this->upload_blob( $image_path );
