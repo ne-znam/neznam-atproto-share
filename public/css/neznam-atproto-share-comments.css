@@ -1,0 +1,67 @@
+#comments.neznam-atproto-share-comments ol {
+    list-style: none;
+}
+
+#comments.neznam-atproto-share-comments ol article {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    margin-bottom: 30px;
+    font-size: 90%;
+}
+#comments.neznam-atproto-share-comments ol .comment-meta {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+}
+#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar {
+    flex: 0 0 auto;
+    width: 50px;
+}
+#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar img, #comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar svg {
+    height: 42px;
+    width: 42px;
+    clip-path: circle();
+}
+#comments.neznam-atproto-share-comments ol .comment-metadata {
+    display: flex;
+    flex-direction: column;
+}
+#comments.neznam-atproto-share-comments ol .comment-metadata .comment-author {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+#comments.neznam-atproto-share-comments ol .comment-metadata .comment-time {
+    margin: 0;
+    font-size: 16px;
+}
+#comments.neznam-atproto-share-comments ol .comment-metadata time {
+    margin: 0;
+}
+#comments.neznam-atproto-share-comments ol article a {
+    text-decoration: none;
+}  
+#comments.neznam-atproto-share-comments ol article a:hover, #comments.neznam-atproto-share-comments ol article a:active {
+    text-decoration: underline;
+}  
+
+#comments.neznam-atproto-share-comments ol article .comment-reply-link, #comments.neznam-atproto-share-comments ol article .comment-repost-link, #comments.neznam-atproto-share-comments ol article .comment-like-link {
+    display: inline-block;
+    background-position: left 0 top 0;
+    background-repeat: no-repeat;
+    padding: 0 0 0 25px;
+    line-height: 25px;
+    font-size: 15px;
+    border: 0;
+    font-weight: normal;
+}
+#comments.neznam-atproto-share-comments ol article .comment-reply-link {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M11 16.517c4.418 0 8-3.284 8-7.017S15.418 3 11 3S3 6.026 3 9.759c0 1.457.546 2.807 1.475 3.91L3.5 18.25l3.916-2.447a9.2 9.2 0 0 0 3.584.714" /></svg>');
+}
+#comments.neznam-atproto-share-comments ol article .comment-repost-link {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"><path d="m13.5 13.5l3 3l3-3" /><path d="M9.5 4.5h3a4 4 0 0 1 4 4v8m-9-9l-3-3l-3 3" /><path d="M11.5 16.5h-3a4 4 0 0 1-4-4v-8" /></g></svg>');
+}
+#comments.neznam-atproto-share-comments ol article .comment-like-link {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M10.5 6.5c.5-2.5 4.343-2.657 6-1c1.603 1.603 1.5 4.334 0 6l-6 6l-6-6a4.243 4.243 0 0 1 0-6c1.55-1.55 5.5-1.5 6 1" /></svg>');
+}

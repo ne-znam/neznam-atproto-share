@@ -3,7 +3,7 @@
  * Admin class
  *
  * @package   Neznam_Atproto_Share
- * @subpackage Neznam_Atproto_Share/includes
+ * @subpackage Neznam_Atproto_Share/admin
  * @link      https://www.neznam.hr
  * @since      1.0.0
  */
@@ -124,6 +124,22 @@ class Neznam_Atproto_Share_Admin {
 		);
 		register_setting(
 			'writing',
+			$this->plugin_name . '-comment-override',
+			array(
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '',
+			)
+		);
+		register_setting(
+			'writing',
+			$this->plugin_name . '-comment-disable',
+			array(
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '',
+			)
+		);
+		register_setting(
+			'writing',
 			$this->plugin_name . '-debug-level',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
@@ -201,6 +217,31 @@ class Neznam_Atproto_Share_Admin {
 			'writing',
 			$this->plugin_name . '-section'
 		);
+		add_settings_field(
+			$this->plugin_name . '-comment-override',
+			'Use Bluesky Replies as Comments',
+			function () {
+				?>
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-comment-override" value="1" <?php checked( '1', get_option( $this->plugin_name . '-comment-override' ), true ); ?> />
+				<small><?php esc_html_e( 'For posts published to Bluesky, replace WordPress comments with Bluesky reply threads.', 'neznam-atproto-share' ); ?></small>
+				<?php
+			},
+			'writing',
+			$this->plugin_name . '-section'
+		);
+		add_settings_field(
+			$this->plugin_name . '-comment-disable',
+			'WordPress Comment Disable',
+			function () {
+				?>
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-comment-disable" value="1" <?php checked( '1', get_option( $this->plugin_name . '-comment-disable' ), true ); ?> />
+				<small><?php esc_html_e( 'If "Use Bluesky Replies as Comments" is enabled but post is not published to Bluesky, enabling this will hide default WordPress comments.', 'neznam-atproto-share' ); ?></small>
+				<?php
+			},
+			'writing',
+			$this->plugin_name . '-section'
+		);
+
 		add_settings_field(
 			$this->plugin_name . '-default',
 			'Default to share',
