@@ -48,7 +48,7 @@
         data.thread.replies.length > 0
       ) {
         const list = renderComments(data.thread, 'comment-list wp-block-comment-template', 1, 1)
-        rootElement.replaceChildren(list)
+        rootElement.replaceChildren(list.ol)
         const someReplies = document.createElement('p')
         someReplies.innerHTML = '<a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow">Post a reply on BlueSky</a>'
         rootElement.append(someReplies)
@@ -75,7 +75,7 @@
   }
 
   function renderComments (thread, classname, depth, count) {
-    if (thread.replies) {
+    if (thread.replies && thread.replies.length > 0) {
       const ol = document.createElement('ol')
       ol.className = classname
       for (const comment of thread.replies) {
@@ -88,11 +88,16 @@
         li.appendChild(htmlContent)
         const comments = renderComments(comment, 'children', depth + 1, count + 1)
         if (comments) {
-          li.appendChild(comments)
-          ol.appendChild(li)
+          li.appendChild(comments.ol)
+          count += comments.count
         }
+        count++
+        ol.appendChild(li)
       }
-      return ol
+      return {
+        ol,
+        count
+      }
     }
     return false
   }
@@ -147,22 +152,23 @@
       </a>`
 
     if (blockTheme) {
-      return `<div class="wp-block-columns is-layout-flex wp-container-core-columns-is-layout-3 wp-block-columns-is-layout-flex">
-        <div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow" style="flex-basis:30px">
+      return `<div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow" style="margin-bottom:var(--wp--preset--spacing--40);">
+        <div class="wp-block-group is-nowrap is-layout-flex wp-container-core-group-is-layout-11 wp-block-group-is-layout-flex" style="align-items:flex-start;justify-content:flex-start;gap:var(--wp--preset--spacing--20);flex-wrap: nowrap;">
           <div class="wp-block-avatar">${authorImage}</div>
-        </div>
-        <div class="wp-block-column is-layout-flow wp-block-column-is-layout-flow">
-          <div class="wp-block-comment-author-name" style="margin:0">
-            <a href="https://bsky.app/profile/${comment.post.author.handle}" rel="external nofollow ugc"><b>${authorName}</b></a>
-          </div>
-          <div class="wp-block-comment-date" style="margin-top:0">
-            <small><time datetime="${replyDate}">
-              <a href="${ToBskyUrl(comment.post.uri)}" rel="external nofollow ugc">${replyDate.toLocaleString()}</a>
-            </time></small>
-          </div>
-          <div class="wp-block-comment-content"><p>${comment.post.record.text}</p></div>
-          <div class="wp-block-comment-reply-link">
-            ${replyLinks}
+          <div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow">
+            <!-- Author name height + comment date height = Avatar height -->
+            <div class="wp-block-comment-author-name" style="font-size:18px;margin:2px 0 6px;line-height:100%">
+              <a href="https://bsky.app/profile/${comment.post.author.handle}" rel="external nofollow ugc"><b>${authorName}</b></a>
+            </div>
+            <div class="wp-block-comment-date" style="margin:0;font-size:16px;line-height:100%">
+              <small><time datetime="${replyDate}">
+                <a href="${ToBskyUrl(comment.post.uri)}" rel="external nofollow ugc">${replyDate.toLocaleString()}</a>
+              </time></small>
+            </div>
+            <div class="wp-block-comment-content"><p>${comment.post.record.text}</p></div>
+            <div class="wp-block-comment-reply-link">
+              ${replyLinks}
+            </div>
           </div>
         </div>
       </div>`
