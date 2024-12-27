@@ -5,7 +5,7 @@ Tags: atproto, share, bluesky
 Requires at least: 6.0.0
 Requires PHP: 8.0.0
 Tested up to: 6.7.0
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ Yes, you can use this with other ATProto networks. Just make sure you have the c
 2. This screen shows the settings page
 
 == Changelog ==
+
+= 1.7.0 =
+* Fixed share URL to preserve even after plugin deletion
 
 = 1.6.0 =
 * Added templates for the post status

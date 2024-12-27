@@ -472,14 +472,20 @@ class Neznam_Atproto_Share_Admin {
 	 * @return void
 	 */
 	public function render_meta_box() {
-		$uri = get_post_meta( get_the_ID(), $this->plugin_name . '-uri', true );
-		if ( $uri ) {
-			$uri    = explode( '/', $uri );
-			$id     = array_pop( $uri );
-			$handle = get_option( $this->plugin_name . '-handle' );
+		$url = get_post_meta( get_the_ID(), $this->plugin_name . '-http-uri', true );
+		if (!$url) {
+			$uri = get_post_meta( get_the_ID(), $this->plugin_name . '-uri', true );
+			if ( $uri ) {
+				$uri    = explode( '/', $uri );
+				$id     = array_pop( $uri );
+				$handle = get_option( $this->plugin_name . '-handle' );
+				$url    = 'https://bsky.app/profile/' . $handle . '/post/' . $id;
+			}
+		}
+		if ( $url ) {
 			?>
 			<p><?php esc_html_e( 'Published on Atproto', 'neznam-atproto-share' ); ?></p>
-			<p><a href="<?php echo esc_url( 'https://bsky.app/profile/' . $handle . '/post/' . $id ); ?>" target="_blank" rel="noreferrer"><?php esc_html_e( 'View on Bluesky', 'neznam-atproto-share' ); ?></a></p>
+			<p><a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noreferrer"><?php esc_html_e( 'View on Bluesky', 'neznam-atproto-share' ); ?></a></p>
 			<?php
 			return;
 		}
