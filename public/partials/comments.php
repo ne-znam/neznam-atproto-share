@@ -56,12 +56,12 @@ $comment_template = '<article class="comment comment-body">
 		</a>
 	  </div>
       </article>';
-$comment_template = apply_filters( 'neznat_atproto_comment_template', $comment_template );
+$comment_template = apply_filters( 'neznam_atproto_comment_template', $comment_template );
 
 $allowed_html         = wp_kses_allowed_html( 'post' );
 $allowed_html['time'] = array( 'datetime' => true );
 
-echo '<script type="text/html" id="neznat-atproto-comment-template">';
+echo '<script type="text/html" id="neznam-atproto-comment-template">';
 echo wp_kses( $comment_template, $allowed_html );
 echo '</script>';
 $direct_link = 'https://bsky.app/profile/' . esc_attr( $handle ) . '/post/' . esc_attr( substr( $bluesky_uri, strrpos( $bluesky_uri, '/' ) + 1 ) );

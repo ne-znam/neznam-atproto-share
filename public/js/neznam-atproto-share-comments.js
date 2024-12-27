@@ -31,7 +31,7 @@
   const rootElement = document.querySelector('#comments.neznam-atproto-share-comments')
   if (!rootElement || !rootElement.dataset.uri) return
   const atProto = rootElement.dataset.uri
-  const commentTemplate = document.querySelector('#neznat-atproto-comment-template')
+  const commentTemplate = document.querySelector('#neznam-atproto-comment-template')
   if (!commentTemplate) {
     console.warn('Unable to load comment template. Aborting comment rendering')
     return
