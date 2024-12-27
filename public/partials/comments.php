@@ -21,8 +21,51 @@ if ( empty( $handle ) || empty( $bluesky_uri ) ) {
 	return;
 }
 
+$comment_template = '<article class="comment comment-body">
+      <header class="comment-meta">
+        <div class="comment-avatar">
+		  ##AUTHOR_IMAGE##
+		</div>
+        <div class="comment-metadata">
+          <div class="comment-author">
+            <a href="##AUTHOR_PROFILE_URL##" rel="external nofollow ugc" target="_blank"><b>##AUTHOR_NAME##</b></a>
+          </div>
+		  <div class="comment-time">
+			<a href="##POST_URL##" rel="external nofollow ugc" class="url" target="_blank">
+				<time datetime="##POST_DATE_ISO##">##POST_DATA_HUMAN##</time>
+			</a>
+		  </div>
+        </div>
+      </header>
+      <section class="comment-content comment">
+        ##POST_TEXT##
+      </section>
+      <div class="reply">
+		<a class="comment-reply-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##REPLY_COUNT##
+		</a>
+		<span>&nbsp;&nbsp;</span>
+
+		<a class="comment-repost-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##REPOST_COUNT##
+		</a>
+		<span>&nbsp;&nbsp;</span>
+
+		<a class="comment-like-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##LIKE_COUNT##
+		</a>
+	  </div>
+      </article>';
+$comment_template = apply_filters( 'neznat_atproto_comment_template', $comment_template );
+
+$allowed_html         = wp_kses_allowed_html( 'post' );
+$allowed_html['time'] = array( 'datetime' => true );
+
+echo '<script type="text/html" id="neznat-atproto-comment-template">';
+echo wp_kses( $comment_template, $allowed_html );
+echo '</script>';
 $direct_link = 'https://bsky.app/profile/' . esc_attr( $handle ) . '/post/' . esc_attr( substr( $bluesky_uri, strrpos( $bluesky_uri, '/' ) + 1 ) );
-echo '<div id="comments" class="comments-area neznam-atproto-share-comments" data-block-theme="' . esc_attr( wp_is_block_theme() ) . '" data-uri="' . esc_attr( $bluesky_uri ) . '">
+echo '<div id="comments" class="comments-area neznam-atproto-share-comments" data-uri="' . esc_attr( $bluesky_uri ) . '">
 <svg version="1.1" id="L1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve" style="width:2rem;margin-bottom: -.5rem;">
 	<circle fill="none" stroke="#fff" stroke-width="1" stroke-miterlimit="10" stroke-dasharray="10,10" cx="50" cy="50" r="39">
 		<animateTransform 

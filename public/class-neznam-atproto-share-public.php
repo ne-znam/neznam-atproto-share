@@ -122,6 +122,7 @@ class Neznam_Atproto_Share_Public {
 			add_filter( 'comments_template', array( $this, 'comments_template' ) );
 			wp_deregister_script( 'comment-reply' );
 			wp_enqueue_script( $this->plugin_name . '-comments' );
+			wp_enqueue_style( $this->plugin_name . '-comments' );
 
 			unregister_block_type( 'core/comments' );
 			register_block_type(

@@ -164,6 +164,7 @@ class Neznam_Atproto_Share {
 			$plugin_public = new Neznam_Atproto_Share_Public( $this->get_plugin_name(), $this->get_version() );
 			$this->loader->add_action( 'wp_head', $plugin_public, 'manage_feeds', -10 );
 			$this->loader->add_action( 'init', $plugin_public, 'register_scripts' );
+			$this->loader->add_action( 'init', $plugin_public, 'register_styles' );
 			$this->loader->add_filter( 'loop_start', $plugin_public, 'comment_controls' );
 		}
 	}
