@@ -5,7 +5,7 @@ Tags: atproto, share, bluesky
 Requires at least: 6.0.0
 Requires PHP: 8.0.0
 Tested up to: 6.7.0
-Stable tag: 1.5.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,7 +31,7 @@ This section describes how to install the plugin and get it working.
 
 1. Upload `neznam-atproto-share.zip` in Plugins admin page, or install directly from the plugin search
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Setup the login information in the Settings -> Writing page
+3. Set up the login information in the Settings -> Writing page
 
 == Frequently Asked Questions ==
 
@@ -49,6 +49,9 @@ Yes, you can use this with other ATProto networks. Just make sure you have the c
 2. This screen shows the settings page
 
 == Changelog ==
+
+= 1.6.0 =
+* Added templates for the post status
 
 = 1.5.0 =
 * All inputs, both provided from /wp-admin/ as well as external sources, are sanitized and have their validity checked (thanks, White Fir)

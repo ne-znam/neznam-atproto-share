@@ -116,6 +116,14 @@ class Neznam_Atproto_Share_Admin {
 		);
 		register_setting(
 			'writing',
+			$this->plugin_name . '-post-format',
+			array(
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 'post_title',
+			)
+		);
+		register_setting(
+			'writing',
 			$this->plugin_name . '-comment-override',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
@@ -142,7 +150,19 @@ class Neznam_Atproto_Share_Admin {
 			$this->plugin_name . '-section',
 			'Atproto Share settings',
 			function () {
-				echo '<p>' . esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) . '</p>';
+				echo '<p>' .
+				esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) .
+				' (' .
+				wp_kses(
+					__( 'Enjoying this plugin? Please <a href="https://wordpress.org/support/plugin/neznam-atproto-share/reviews/#new-post" target="_blank">leave a review</a> to support its development.', 'neznam-atproto-share' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
+				) .
+				')</p>';
 				wp_nonce_field( $this->plugin_name . '-save-settings', $this->plugin_name . '-nonce' );
 			},
 			'writing',
@@ -242,6 +262,42 @@ class Neznam_Atproto_Share_Admin {
 				?>
 				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-use-cron" value="1" <?php checked( 1, get_option( $this->plugin_name . '-use-cron' ), true ); ?> />
 				<small><?php esc_html_e( 'Check this if you have trouble publishing posts. This will use cronjob to publish.', 'neznam-atproto-share' ); ?></small>
+				<?php
+			},
+			'writing',
+			$this->plugin_name . '-section'
+		);
+
+		add_settings_field(
+			$this->plugin_name . '-post-format',
+			'Post Format',
+			function () {
+				$cur_format = get_option( $this->plugin_name . '-post-format' );
+				if ( empty( $cur_format ) ) {
+					$cur_format = 'post_title';
+				}
+				$formats = array(
+					'post_title'             => __( 'Post Title', 'neznam-atproto-share ' ),
+					'post_excerpt'           => __( 'Post Excerpt', 'neznam-atproto-share ' ),
+					'post_title_and_excerpt' => __( 'Post Title: Post Excerpt', 'neznam-atproto-share ' ),
+				);
+				?>
+				<select name="<?php echo esc_html( $this->plugin_name ); ?>-post-format">
+				<?php foreach ( $formats as $key => $value ) { ?>
+					<option value="<?php echo esc_html( $key ); ?>"
+												<?php
+												if ( $cur_format === $key ) {
+													echo 'selected="selected"';
+												}
+												?>
+					><?php echo esc_html( $value ); ?></option>
+				<?php } ?>
+				</select>
+				<small>
+				<?php
+				esc_html_e( 'If the "Text to publish" field is blank, this information will populate the post.', 'neznam-atproto-share' );
+				?>
+				</small>
 				<?php
 			},
 			'writing',

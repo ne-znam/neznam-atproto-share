@@ -221,12 +221,24 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
-		$image_path = get_attached_file( get_post_thumbnail_id( $post->ID ) );
+		$image_path = get_attached_file( get_post_thumbnail_id( $post->ID ) ); // TODO: Add option to select image and size.
 		$blob       = null;
 		if ( $image_path ) {
 			$blob = $this->upload_blob( $image_path );
 		}
 		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
+		if ( ! empty( $text_to_publish ) ) {
+			$post_text = $text_to_publish;
+		} else {
+			$post_format = get_option( $this->plugin_name . '-post-format' );
+			if ( ! empty( $post->post_excerpt ) && 'post_excerpt' === $post_format ) {
+				$post_text = $post->post_excerpt;
+			} elseif ( ! empty( $post->post_excerpt ) && 'post_title_and_excerpt' === $post_format ) {
+				$post_text = $post->post_title . ': ' . $post->post_excerpt;
+			} else {
+				$post_text = $post->post_title;
+			}
+		}
 
 		$locale = str_replace( '_', '-', get_locale() );
 
@@ -234,14 +246,14 @@ class Neznam_Atproto_Share_Logic {
 			'collection' => 'app.bsky.feed.post',
 			'repo'       => $this->did,
 			'record'     => array(
-				'text'      => ! empty( $text_to_publish ) ? $text_to_publish : $post->post_title,
+				'text'      => $post_text,
 				'createdAt' => gmdate( 'c' ),
 				'embed'     => array(
 					'$type'    => 'app.bsky.embed.external',
 					'external' => array(
 						'uri'         => get_the_permalink( $post ),
 						'title'       => $post->post_title,
-						'description' => get_post_meta( $post->ID, 'subtitle', true ),
+						'description' => $post->post_excerpt,
 					),
 				),
 				'langs'     => array( $locale ),
@@ -404,8 +416,13 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $wp_filesystem->exists( $path ) ) {
 			return array();
 		}
-
+		$size = $wp_filesystem->size( $path );
+		if ( $size > 1000000 ) {
+			$this->log( 'WARN', 'File is too large to upload. Skipping.' );
+			return array();
+		}
 		$file = $wp_filesystem->get_contents( $path );
+
 		$body = wp_remote_post(
 			trailingslashit( $this->url ) . 'xrpc/com.atproto.repo.uploadBlob',
 			array(
