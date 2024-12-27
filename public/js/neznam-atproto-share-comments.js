@@ -50,11 +50,11 @@
         const list = renderComments(data.thread, 'comment-list wp-block-comment-template', 1, 1)
         rootElement.replaceChildren(list.ol)
         const someReplies = document.createElement('p')
-        someReplies.innerHTML = '<a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow">Post a reply on BlueSky</a>'
+        someReplies.innerHTML = '<a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow" target="_blank">Post a reply on BlueSky</a>'
         rootElement.append(someReplies)
       } else {
         const noReplies = document.createElement('em')
-        noReplies.innerHTML = 'No replies. <a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow">Post a reply on BlueSky</a>'
+        noReplies.innerHTML = 'No replies. <a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow" target="_blank">Post a reply on BlueSky</a>'
         rootElement.replaceChildren(noReplies)
       }
     })
@@ -126,7 +126,7 @@
 
     // Icons from https://www.systemuicons.com/
     const replyLinks = `
-      <a class="comment-reply-link" href="${ToBskyUrl(comment.post.uri)}" rel="ugc external nofollow">
+      <a class="comment-reply-link" href="${ToBskyUrl(comment.post.uri)}" rel="ugc external nofollow" target="_blank">
         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor">
           <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M11 16.517c4.418 0 8-3.284 8-7.017S15.418 3 11 3S3 6.026 3 9.759c0 1.457.546 2.807 1.475 3.91L3.5 18.25l3.916-2.447a9.2 9.2 0 0 0 3.584.714" />
         </svg>
@@ -134,7 +134,7 @@
       </a>
       <span>&nbsp;&nbsp;</span>
 
-      <a class="comment-reply-link" href="${ToBskyUrl(comment.post.uri)}" rel="ugc external nofollow">
+      <a class="comment-reply-link" href="${ToBskyUrl(comment.post.uri)}" rel="ugc external nofollow" target="_blank">
         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor">
           <g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
             <path d="m13.5 13.5l3 3l3-3" /><path d="M9.5 4.5h3a4 4 0 0 1 4 4v8m-9-9l-3-3l-3 3" /><path d="M11.5 16.5h-3a4 4 0 0 1-4-4v-8" />
@@ -144,7 +144,7 @@
       </a>
       <span>&nbsp;&nbsp;</span>
 
-      <a class="comment-reply-link" href="${ToBskyUrl(comment.post.uri)}" rel="ugc external nofollow">
+      <a class="comment-reply-link" href="${ToBskyUrl(comment.post.uri)}" rel="ugc external nofollow" target="_blank">
           <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor">
               <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M10.5 6.5c.5-2.5 4.343-2.657 6-1c1.603 1.603 1.5 4.334 0 6l-6 6l-6-6a4.243 4.243 0 0 1 0-6c1.55-1.55 5.5-1.5 6 1" />
           </svg>
@@ -158,11 +158,11 @@
           <div class="wp-block-group is-layout-flow wp-block-group-is-layout-flow">
             <!-- Author name height + comment date height = Avatar height -->
             <div class="wp-block-comment-author-name" style="font-size:18px;margin:2px 0 6px;line-height:100%">
-              <a href="https://bsky.app/profile/${comment.post.author.handle}" rel="external nofollow ugc"><b>${authorName}</b></a>
+              <a href="https://bsky.app/profile/${comment.post.author.handle}" rel="external nofollow ugc" target="_blank"><b>${authorName}</b></a>
             </div>
             <div class="wp-block-comment-date" style="margin:0;font-size:16px;line-height:100%">
               <small><time datetime="${replyDate}">
-                <a href="${ToBskyUrl(comment.post.uri)}" rel="external nofollow ugc">${replyDate.toLocaleString()}</a>
+                <a href="${ToBskyUrl(comment.post.uri)}" rel="external nofollow ugc" target="_blank">${replyDate.toLocaleString()}</a>
               </time></small>
             </div>
             <div class="wp-block-comment-content"><p>${comment.post.record.text}</p></div>
@@ -178,11 +178,11 @@
         <div class="comment-author vcard">
           ${authorImage}
           <cite style="font-style: normal">
-            <a href="https://bsky.app/profile/${comment.post.author.handle}" rel="external nofollow ugc"><b>${authorName}</b></a>
+            <a href="https://bsky.app/profile/${comment.post.author.handle}" rel="external nofollow ugc" target="_blank"><b>${authorName}</b></a>
           </cite>
         </div>
         <div class="comment-metadata">
-          <a href="${ToBskyUrl(comment.post.uri)}" rel="external nofollow ugc" class="url">
+          <a href="${ToBskyUrl(comment.post.uri)}" rel="external nofollow ugc" class="url" target="_blank">
             <time datetime="${replyDate}">${replyDate.toLocaleString()}</time>
           </a>
         </div>
