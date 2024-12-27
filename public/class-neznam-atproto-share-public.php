@@ -5,7 +5,7 @@
  * @package    Neznam_Atproto_Share
  * @subpackage Neznam_Atproto_Share/public
  * @link       https://www.neznam.hr
- * @since      1.6.0
+ * @since      2.0.0
  */
 
 /**

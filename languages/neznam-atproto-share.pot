@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Neznam Atproto Share\n"
-"POT-Creation-Date: 2024-12-20 08:59+0100\n"
+"POT-Creation-Date: 2024-12-27 10:28+0100\n"
 "PO-Revision-Date: 2024-12-20 08:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,8 +16,8 @@ msgstr ""
 "X-Poedit-WPHeader: neznam-atproto-share.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 "X-Poedit-SearchPathExcluded-1: vendor\n"
@@ -26,86 +26,129 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:129
+#: admin/class-neznam-atproto-share-admin.php:154
 msgid "Enter your server information to enable posting."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:143
+#: admin/class-neznam-atproto-share-admin.php:157
+msgid ""
+"Enjoying this plugin? Please <a href=\"https://wordpress.org/support/plugin/"
+"neznam-atproto-share/reviews/#new-post\" target=\"_blank\">leave a review</"
+"a> to support its development."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:179
 msgid "Enter the URL of your provider or leave as is for BlueSky"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:166
+#: admin/class-neznam-atproto-share-admin.php:205
 msgid ""
 "Enter app password. If using BlueSky visit: <a href=\"https://bsky.app/"
 "settings/app-passwords\" target=\"_blank\">App passwords</a>"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:178
+#: admin/class-neznam-atproto-share-admin.php:226
+msgid ""
+"For posts published to Bluesky, replace WordPress comments with Bluesky "
+"reply threads."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:238
+msgid ""
+"If \"Use Bluesky Replies as Comments\" is enabled but post is not published "
+"to Bluesky, enabling this will hide default WordPress comments."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:251
 msgid "Enable this option to always push posts and publish."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:191
+#: admin/class-neznam-atproto-share-admin.php:264
 msgid ""
 "Check this if you have trouble publishing posts. This will use cronjob to "
 "publish."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:218
+#: admin/class-neznam-atproto-share-admin.php:280
+msgid "Post Title"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:281
+msgid "Post Excerpt"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:282
+msgid "Post Title: Post Excerpt"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:298
+msgid ""
+"If the \"Text to publish\" field is blank, this information will populate "
+"the post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:330
 msgid ""
 "Adjusts the amount of details written to <a href='https://developer."
 "wordpress.org/advanced-administration/debug/debug-wordpress' "
 "target='_blank'>WordPress' Debug system</a>."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:240
-#: admin/class-neznam-atproto-share-admin.php:270
-#: admin/class-neznam-atproto-share-admin.php:298
+#: admin/class-neznam-atproto-share-admin.php:361
+#: admin/class-neznam-atproto-share-admin.php:391
+#: admin/class-neznam-atproto-share-admin.php:419
 msgid "Nonce is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:244
-#: admin/class-neznam-atproto-share-admin.php:274
+#: admin/class-neznam-atproto-share-admin.php:365
+#: admin/class-neznam-atproto-share-admin.php:395
 msgid "Required fields are empty"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:251
+#: admin/class-neznam-atproto-share-admin.php:372
 msgid "Handle is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:282
+#: admin/class-neznam-atproto-share-admin.php:403
 msgid "Password is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:378
+#: admin/class-neznam-atproto-share-admin.php:499
 msgid "Atproto Share"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:401
+#: admin/class-neznam-atproto-share-admin.php:528
 msgid "Published on Atproto"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:402
+#: admin/class-neznam-atproto-share-admin.php:529
 msgid "View on Bluesky"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:419
+#: admin/class-neznam-atproto-share-admin.php:546
 msgid "Publish on Atproto?"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:420
+#: admin/class-neznam-atproto-share-admin.php:547
 msgid "Publishes post to Atproto network."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:422
+#: admin/class-neznam-atproto-share-admin.php:549
 msgid "Text to publish"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:428
+#: admin/class-neznam-atproto-share-admin.php:555
 msgid "Text to add as status"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:443
+#: admin/class-neznam-atproto-share-admin.php:570
 msgid "Every minute"
+msgstr ""
+
+#. translators: %s: URL of post
+#: public/partials/comments.php:84
+#, php-format
+msgid "Loading comments from <a href=\"%s\">Bluesky post</a>&hellip;"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

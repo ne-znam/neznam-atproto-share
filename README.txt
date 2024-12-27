@@ -5,15 +5,15 @@ Tags: atproto, share, bluesky
 Requires at least: 6.0.0
 Requires PHP: 8.0.0
 Tested up to: 6.7.0
-Stable tag: 1.7.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically share to Authenticated Transfer Protocol networks like BlueSky
+Automatically share to Authenticated Transfer Protocol networks like BlueSky and display comments from that network below the post as comments.
 
 == Description ==
 
-This plugin enables automatic posting of articles to ATProto networks like BlueSky.
+This plugin enables automatic posting of articles to ATProto networks like BlueSky. Also, it enables the display of comments from the ATProto network below the post as comments.
 
 The plugin adds a new section in the Settings -> Writing page where you can enter the login information for your ATProto network.
 
@@ -43,12 +43,19 @@ Yes, you can use this with BlueSky. Just make sure you have the correct login in
 
 Yes, you can use this with other ATProto networks. Just make sure you have the correct login information.
 
+= How can I modify the comment template =
+
+You can use the `neznam_atproto_comment_template` filter to modify the comment template. The filter receives the comment template as the first argument. See `/public/partials/comment.php` for the default template.
+
 == Screenshots ==
 
 1. This screen shows the meta box in the post editor
 2. This screen shows the settings page
 
 == Changelog ==
+
+= 2.0.0 =
+* Added option to display comments from ATProto networks as comments below the post
 
 = 1.7.0 =
 * Fixed share URL to preserve even after plugin deletion

@@ -40,3 +40,5 @@ delete_option( $plugin_name . '-refresh-token' );
 delete_option( $plugin_name . '-use-cron' );
 delete_option( $plugin_name . '-debug-level' );
 delete_option( $plugin_name . '-post-format' );
+delete_option( $plugin_name . '-comment-override' );
+delete_option( $plugin_name . '-comment-disable' );

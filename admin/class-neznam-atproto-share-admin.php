@@ -59,7 +59,7 @@ class Neznam_Atproto_Share_Admin {
 	 */
 	public function settings_link( $links ) {
 		// Build and escape the URL.
-		$url = esc_url( get_admin_url() . 'options-writing.php#' . $this->plugin_name );
+		$url = esc_url( add_query_arg( 'page', $this->plugin_name, get_admin_url(null, 'options-general.php') ) );
 		// Create the link.
 		$settings_link = "<a href='$url'>" . __( 'Settings', 'neznam-atproto-share' ) . '</a>';
 		// Adds the link to the end of the array.
@@ -70,6 +70,25 @@ class Neznam_Atproto_Share_Admin {
 		return $links;
 	}
 
+	public function add_page() {
+		add_options_page('ATProto Share', 'ATProto Share', 'manage_options', 'neznam-atproto-share', array($this, 'create_admin_page'));
+	}
+
+	public function create_admin_page() {
+		?>
+		<div class="wrap">
+			<h2>ATProto Share Settings</h2>
+			<form method="post" action="options.php">
+				<?php
+				settings_fields('neznam-atproto-share');
+				do_settings_sections('neznam-atproto-share');
+				submit_button();
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
 	/**
 	 * Add all settings
 	 *
@@ -77,7 +96,7 @@ class Neznam_Atproto_Share_Admin {
 	 */
 	public function add_settings() {
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-url',
 			array(
 				'sanitize_callback' => 'esc_url',
@@ -85,21 +104,21 @@ class Neznam_Atproto_Share_Admin {
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-handle',
 			array(
 				'sanitize_callback' => array( $this, 'check_handle' ),
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-secret',
 			array(
 				'sanitize_callback' => array( $this, 'check_password' ),
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-default',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
@@ -107,7 +126,7 @@ class Neznam_Atproto_Share_Admin {
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-use-cron',
 			array(
 				'sanitize_callback' => array( $this, 'adjust_cron' ),
@@ -115,7 +134,7 @@ class Neznam_Atproto_Share_Admin {
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-post-format',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
@@ -123,7 +142,7 @@ class Neznam_Atproto_Share_Admin {
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-comment-override',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
@@ -131,7 +150,7 @@ class Neznam_Atproto_Share_Admin {
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-comment-disable',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
@@ -139,16 +158,17 @@ class Neznam_Atproto_Share_Admin {
 			)
 		);
 		register_setting(
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-debug-level',
 			array(
 				'sanitize_callback' => 'sanitize_text_field',
 				'default'           => 'ERROR',
 			)
 		);
+
 		add_settings_section(
 			$this->plugin_name . '-section',
-			'Atproto Share settings',
+			'Share settings',
 			function () {
 				echo '<p>' .
 				esc_html__( 'Enter your server information to enable posting.', 'neznam-atproto-share' ) .
@@ -165,11 +185,12 @@ class Neznam_Atproto_Share_Admin {
 				')</p>';
 				wp_nonce_field( $this->plugin_name . '-save-settings', $this->plugin_name . '-nonce' );
 			},
-			'writing',
+			'neznam-atproto-share',
 			array(
 				'before_section' => '<hr id="' . esc_html( $this->plugin_name ) . '"/>',
 			)
 		);
+
 		add_settings_field(
 			$this->plugin_name . '-url',
 			'Atproto URL',
@@ -179,7 +200,7 @@ class Neznam_Atproto_Share_Admin {
 				<small><?php esc_html_e( 'Enter the URL of your provider or leave as is for BlueSky', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
 		add_settings_field(
@@ -190,9 +211,10 @@ class Neznam_Atproto_Share_Admin {
 				<input type="text" name="<?php echo esc_html( $this->plugin_name ); ?>-handle" value="<?php echo esc_html( get_option( $this->plugin_name . '-handle' ) ); ?>" />
 				<?php
 			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
+
 		add_settings_field(
 			$this->plugin_name . '-secret',
 			'Secret',
@@ -200,45 +222,21 @@ class Neznam_Atproto_Share_Admin {
 				?>
 				<input type="password" name="<?php echo esc_html( $this->plugin_name ); ?>-secret" value="<?php echo esc_html( get_option( $this->plugin_name . '-secret' ) ); ?>" /><br>
 				<small>
-				<?php
-				echo wp_kses(
-					__( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ),
-					array(
-						'a' => array(
-							'href'   => array(),
-							'target' => array(),
-						),
-					)
-				);
-				?>
-					</small>
-				<?php
-			},
-			'writing',
-			$this->plugin_name . '-section'
-		);
-		add_settings_field(
-			$this->plugin_name . '-comment-override',
-			'Use Bluesky Replies as Comments',
-			function () {
-				?>
-				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-comment-override" value="1" <?php checked( '1', get_option( $this->plugin_name . '-comment-override' ), true ); ?> />
-				<small><?php esc_html_e( 'For posts published to Bluesky, replace WordPress comments with Bluesky reply threads.', 'neznam-atproto-share' ); ?></small>
+					<?php
+					echo wp_kses(
+						__( 'Enter app password. If using BlueSky visit: <a href="https://bsky.app/settings/app-passwords" target="_blank">App passwords</a>', 'neznam-atproto-share' ),
+						array(
+							'a' => array(
+								'href'   => array(),
+								'target' => array(),
+							),
+						)
+					);
+					?>
+				</small>
 				<?php
 			},
-			'writing',
-			$this->plugin_name . '-section'
-		);
-		add_settings_field(
-			$this->plugin_name . '-comment-disable',
-			'WordPress Comment Disable',
-			function () {
-				?>
-				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-comment-disable" value="1" <?php checked( '1', get_option( $this->plugin_name . '-comment-disable' ), true ); ?> />
-				<small><?php esc_html_e( 'If "Use Bluesky Replies as Comments" is enabled but post is not published to Bluesky, enabling this will hide default WordPress comments.', 'neznam-atproto-share' ); ?></small>
-				<?php
-			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
 
@@ -251,7 +249,7 @@ class Neznam_Atproto_Share_Admin {
 				<small><?php esc_html_e( 'Enable this option to always push posts and publish.', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
 
@@ -264,7 +262,7 @@ class Neznam_Atproto_Share_Admin {
 				<small><?php esc_html_e( 'Check this if you have trouble publishing posts. This will use cronjob to publish.', 'neznam-atproto-share' ); ?></small>
 				<?php
 			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
 
@@ -300,7 +298,7 @@ class Neznam_Atproto_Share_Admin {
 				</small>
 				<?php
 			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
 
@@ -339,8 +337,45 @@ class Neznam_Atproto_Share_Admin {
 						</small>
 				<?php
 			},
-			'writing',
+			'neznam-atproto-share',
 			$this->plugin_name . '-section'
+		);
+
+		add_settings_section(
+			$this->plugin_name . '-comments-section',
+			'Comments settings',
+			function () {
+				echo '<p>' .
+					 esc_html__( 'Enable comments.', 'neznam-atproto-share' ) .
+					 '</p>';
+			},
+			'neznam-atproto-share',
+		);
+
+		add_settings_field(
+			$this->plugin_name . '-comment-override',
+			'Use Bluesky Replies as Comments',
+			function () {
+				?>
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-comment-override" value="1" <?php checked( '1', get_option( $this->plugin_name . '-comment-override' ), true ); ?> />
+				<small><?php esc_html_e( 'For posts published to Bluesky, replace WordPress comments with Bluesky reply threads.', 'neznam-atproto-share' ); ?></small>
+				<?php
+			},
+			'neznam-atproto-share',
+			$this->plugin_name . '-comments-section'
+		);
+
+		add_settings_field(
+			$this->plugin_name . '-comment-disable',
+			'WordPress Comment Disable',
+			function () {
+				?>
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-comment-disable" value="1" <?php checked( '1', get_option( $this->plugin_name . '-comment-disable' ), true ); ?> />
+				<small><?php esc_html_e( 'If "Use Bluesky Replies as Comments" is enabled but post is not published to Bluesky, enabling this will hide default WordPress comments.', 'neznam-atproto-share' ); ?></small>
+				<?php
+			},
+			'neznam-atproto-share',
+			$this->plugin_name . '-comments-section'
 		);
 	}
 
