@@ -36,6 +36,7 @@
     console.warn('Unable to load comment template. Aborting comment rendering')
     return
   }
+  const commentOverview = document.querySelector('#neznam-atproto-comment-overview')
 
   fetch(
     'https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread?uri=' + atProto
@@ -51,8 +52,10 @@
         typeof data.thread.replies !== 'undefined' &&
         data.thread.replies.length > 0
       ) {
+        const overview = createElementFromHTML(renderOverview(data.thread.post))
+        rootElement.replaceChildren(overview)
         const list = renderComments(data.thread, 'comment-list', 1, 1)
-        rootElement.replaceChildren(list.ol)
+        rootElement.appendChild(list.ol)
         const someReplies = document.createElement('p')
         someReplies.innerHTML = '<a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow" target="_blank">Post a reply on BlueSky</a>'
         rootElement.append(someReplies)
@@ -113,6 +116,16 @@
     return div.firstChild
   }
 
+  function sanitizeAttr (text) {
+    return text.replaceAll('"', '&quot;')
+  }
+
+  function escapeHTML (text) {
+    const div = document.createElement('div')
+    div.innerText = text.trim()
+    return div.innerHTML
+  }
+
   function renderComment (comment) {
     if (!comment.post.record || !comment.post.record.text || !comment.post.record.createdAt || !comment.post.author || !comment.post.author.handle || !comment.post.uri) {
       return false
@@ -125,21 +138,40 @@
     const likeCount = comment.post.likeCount ?? '0'
     let authorImage = defaultAvatar
     if (comment.post.author.avatar) {
-      authorImage = `<img src="${comment.post.author.avatar}">`
+      authorImage = `<img src="${comment.post.author.avatar}" loading="lazy" alt="Profile picture of ${sanitizeAttr(authorName)}">`
     }
 
     let commentHTML = commentTemplate.innerHTML
     const replacements = {
       '##AUTHOR_IMAGE##': authorImage,
       '##AUTHOR_PROFILE_URL##': `https://bsky.app/profile/${comment.post.author.handle}`,
-      '##AUTHOR_NAME##': authorName,
+      '##AUTHOR_NAME##': escapeHTML(authorName),
       '##POST_DATE_ISO##': replyDate.toISOString(),
       '##POST_DATA_HUMAN##': replyDate.toLocaleString(),
       '##POST_URL##': ToBskyUrl(comment.post.uri),
-      '##POST_TEXT##': comment.post.record.text,
+      '##POST_TEXT##': escapeHTML(comment.post.record.text),
       '##REPLY_COUNT##': replyCount,
       '##REPOST_COUNT##': repostCount,
       '##LIKE_COUNT##': likeCount
+    }
+    for (const key of Object.keys(replacements)) {
+      commentHTML = commentHTML.replaceAll(key, replacements[key])
+    }
+    return commentHTML
+  }
+
+  function renderOverview (post) {
+    const replyCount = post.replyCount ?? '0'
+    const repostCount = post.repostCount ?? '0'
+    const likeCount = post.likeCount ?? '0'
+    const quoteCount = post.quoteCount ?? '0'
+
+    let commentHTML = commentOverview.innerHTML
+    const replacements = {
+      '##TOTAL_LIKES##': likeCount,
+      '##TOTAL_QUOTES##': quoteCount,
+      '##TOTAL_REPLIES##': replyCount,
+      '##TOTAL_REPOSTS##': repostCount
     }
     for (const key of Object.keys(replacements)) {
       commentHTML = commentHTML.replaceAll(key, replacements[key])

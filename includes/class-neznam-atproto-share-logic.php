@@ -288,11 +288,11 @@ class Neznam_Atproto_Share_Logic {
 		$body          = json_decode( $response_body, true );
 		if ( isset( $body['uri'] ) && $this->validate_at_uri( $body['uri'] ) ) {
 			update_post_meta( $post->ID, $this->plugin_name . '-uri', $body['uri'] );
-			$uri    = explode( '/', $body['uri'] );
-			$id     = array_pop( $uri );
+			$uri = explode( '/', $body['uri'] );
+			$id  = array_pop( $uri );
 			// TODO: when other networks are added, this will need to be updated.
 			$url = 'https://bsky.app/profile/' . $this->handle . '/post/' . $id;
-			update_post_meta( $post->ID, $this->plugin_name . '-http-uri',  $url);
+			update_post_meta( $post->ID, $this->plugin_name . '-http-uri', $url );
 			$this->log( 'DEBUG', 'Record successfully created. URI is ' . esc_html( $body['uri'] ) );
 		} else {
 			$this->log( 'ERROR', 'Failed to create record. Response from server: ' . esc_html( $response_body ) );
