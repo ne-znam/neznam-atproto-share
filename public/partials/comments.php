@@ -58,11 +58,36 @@ $comment_template = '<article class="comment comment-body">
       </article>';
 $comment_template = apply_filters( 'neznam_atproto_comment_template', $comment_template );
 
+$comment_overview = '<div class="comment-overview">
+		<a class="comment-reply-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##TOTAL_REPLIES##
+		</a>
+		<span>&nbsp;&nbsp;</span>
+
+		<a class="comment-repost-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##TOTAL_REPOSTS##
+		</a>
+		<span>&nbsp;&nbsp;</span>
+
+		<a class="comment-like-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##TOTAL_LIKES##
+		</a>
+		<span>&nbsp;&nbsp;</span>
+
+		<a class="comment-quote-link" href="##POST_URL##" rel="ugc external nofollow" target="_blank">
+			##TOTAL_QUOTES##
+		</a>
+	  </div>';
+$comment_overview = apply_filters( 'neznam_atproto_comment_overview', $comment_overview );
+
 $allowed_html         = wp_kses_allowed_html( 'post' );
 $allowed_html['time'] = array( 'datetime' => true );
 
 echo '<script type="text/html" id="neznam-atproto-comment-template">';
 echo wp_kses( $comment_template, $allowed_html );
+echo '</script>';
+echo '<script type="text/html" id="neznam-atproto-comment-overview">';
+echo wp_kses( $comment_overview, $allowed_html );
 echo '</script>';
 $direct_link = 'https://bsky.app/profile/' . esc_attr( $handle ) . '/post/' . esc_attr( substr( $bluesky_uri, strrpos( $bluesky_uri, '/' ) + 1 ) );
 echo '<div id="comments" class="comments-area neznam-atproto-share-comments" data-uri="' . esc_attr( $bluesky_uri ) . '">

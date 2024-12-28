@@ -59,7 +59,7 @@ class Neznam_Atproto_Share_Admin {
 	 */
 	public function settings_link( $links ) {
 		// Build and escape the URL.
-		$url = esc_url( add_query_arg( 'page', $this->plugin_name, get_admin_url(null, 'options-general.php') ) );
+		$url = esc_url( add_query_arg( 'page', $this->plugin_name, get_admin_url( null, 'options-general.php' ) ) );
 		// Create the link.
 		$settings_link = "<a href='$url'>" . __( 'Settings', 'neznam-atproto-share' ) . '</a>';
 		// Adds the link to the end of the array.
@@ -70,18 +70,28 @@ class Neznam_Atproto_Share_Admin {
 		return $links;
 	}
 
+	/**
+	 * Injects the "ATProto Share" link into the options submenu.
+	 *
+	 * @since 2.0.0
+	 */
 	public function add_page() {
-		add_options_page('ATProto Share', 'ATProto Share', 'manage_options', 'neznam-atproto-share', array($this, 'create_admin_page'));
+		add_options_page( 'ATProto Share', 'ATProto Share', 'manage_options', 'neznam-atproto-share', array( $this, 'create_admin_page' ) );
 	}
 
+	/**
+	 * Generates the options submenu page.
+	 *
+	 * @since 2.0.0
+	 */
 	public function create_admin_page() {
 		?>
 		<div class="wrap">
 			<h2>ATProto Share Settings</h2>
 			<form method="post" action="options.php">
 				<?php
-				settings_fields('neznam-atproto-share');
-				do_settings_sections('neznam-atproto-share');
+				settings_fields( 'neznam-atproto-share' );
+				do_settings_sections( 'neznam-atproto-share' );
 				submit_button();
 				?>
 			</form>
@@ -346,8 +356,8 @@ class Neznam_Atproto_Share_Admin {
 			'Comments settings',
 			function () {
 				echo '<p>' .
-					 esc_html__( 'Enable comments.', 'neznam-atproto-share' ) .
-					 '</p>';
+					esc_html__( 'Enable comments.', 'neznam-atproto-share' ) .
+					'</p>';
 			},
 			'neznam-atproto-share',
 		);
@@ -549,7 +559,7 @@ class Neznam_Atproto_Share_Admin {
 	 */
 	public function render_meta_box() {
 		$url = get_post_meta( get_the_ID(), $this->plugin_name . '-http-uri', true );
-		if (!$url) {
+		if ( ! $url ) {
 			$uri = get_post_meta( get_the_ID(), $this->plugin_name . '-uri', true );
 			if ( $uri ) {
 				$uri    = explode( '/', $uri );
