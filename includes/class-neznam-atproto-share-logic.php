@@ -213,7 +213,6 @@ class Neznam_Atproto_Share_Logic {
 			$this->log( 'FATAL', $body );
 			return false;
 		}
-		$this->log( 'DEBUG', $body['body'] );
 		return json_decode( $body['body'], true );
 	}
 
