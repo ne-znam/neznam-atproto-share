@@ -176,6 +176,17 @@ class Neznam_Atproto_Share_Public {
 				'in_footer' => true,
 			)
 		);
+		$translation_array = array(
+			'no_replies'   => __( 'No replies.', 'neznam-atproto-share ' ),
+			'post_reply'   => __( 'Post a reply on BlueSky.', 'neznam-atproto-share ' ),
+			'show_replies' => __( 'Show replies', 'neznam-atproto-share ' ),
+			'remaining'    => __( 'remaining', 'neznam-atproto-share ' ),
+		);
+		wp_localize_script(
+			$this->plugin_name . '-comments',
+			'neznam_atproto_share_comments',
+			$translation_array
+		);
 	}
 
 	/**

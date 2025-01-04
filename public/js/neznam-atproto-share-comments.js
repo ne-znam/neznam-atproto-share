@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global jQuery, neznam_atproto_share_comments */
 (function ($) {
   /*
   MIT License
@@ -37,6 +37,9 @@
     return
   }
   const commentOverview = document.querySelector('#neznam-atproto-comment-overview')
+  const pageLimit = 50
+  const shownComments = 0
+  const commentCutoff = shownComments + pageLimit
 
   fetch(
     'https://public.api.bsky.app/xrpc/app.bsky.feed.getPostThread?uri=' + atProto
@@ -54,14 +57,25 @@
       ) {
         const overview = createElementFromHTML(renderOverview(data.thread.post))
         rootElement.replaceChildren(overview)
+        rootElement.style.position = 'relative'
         const list = renderComments(data.thread, 'comment-list', 1, 1)
         rootElement.appendChild(list.ol)
+
+        // Due to hidden and blocked comments, the post.replyCount does not include an accurate count. Display based on number rendered.
+        $(list.ol).find('.neznam-atproto-show-more-comments').each(function () {
+          const currentPoint = parseInt($(this).data('starting'), 10)
+          if (currentPoint + pageLimit < list.count) {
+            $(this).text(neznam_atproto_share_comments.show_replies + ` ${currentPoint} - ${currentPoint + pageLimit} (${list.count - currentPoint} ${neznam_atproto_share_comments.remaining})`)
+          } else {
+            $(this).text(neznam_atproto_share_comments.show_replies + ` ${currentPoint} - ${list.count}`)
+          }
+        })
         const someReplies = document.createElement('p')
-        someReplies.innerHTML = '<a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow" target="_blank">Post a reply on BlueSky</a>'
+        someReplies.innerHTML = '<hr><a href="' + ToBskyUrl(rootElement.dataset.uri) + '" rel="ugc external nofollow" target="_blank">' + neznam_atproto_share_comments.post_reply + '</a>'
         rootElement.append(someReplies)
       } else {
         const noReplies = document.createElement('em')
-        noReplies.innerHTML = 'No replies. <a href="' + ToBskyUrl(rootElement.dataset.uri) + '" class="ugc external nofollow" target="_blank">Post a reply on BlueSky</a>'
+        noReplies.innerHTML = neznam_atproto_share_comments.no_replies + '<a href="' + ToBskyUrl(rootElement.dataset.uri) + '" rel="ugc external nofollow" target="_blank">' + neznam_atproto_share_comments.post_reply + '</a>'
         rootElement.replaceChildren(noReplies)
       }
     })
@@ -92,13 +106,23 @@
         const li = document.createElement('li')
         const swap = count % 2 ? 'odd' : 'even'
         li.className = `comment depth-${depth} ${swap} thread-${swap}`
+        li.id = `neznam-atproto-comment-${count}`
+        if (count > commentCutoff) {
+          li.style.display = 'none'
+        }
         li.appendChild(htmlContent)
-        const comments = renderComments(comment, 'children', depth + 1, count + 1)
-        if (comments) {
-          li.appendChild(comments.ol)
-          count += comments.count
+        if (count % pageLimit === 0) {
+          showMoreLink(li, count + 1)
         }
         count++
+
+        if (comment.replies && comment.replies.length > 0) {
+          const comments = renderComments(comment, 'children', depth + 1, count)
+          if (comments) {
+            li.appendChild(comments.ol)
+            count = comments.count
+          }
+        }
         ol.appendChild(li)
       }
       return {
@@ -107,6 +131,31 @@
       }
     }
     return false
+  }
+
+  function showMoreLink (li, count) {
+    const div = document.createElement('div')
+    div.style.height = '2rem'
+
+    const p = document.createElement('p')
+    p.style.position = 'absolute'
+    p.style.left = 0
+    p.innerHTML = `<a href="#" class="neznam-atproto-show-more-comments" data-starting="${count}"></a>`
+    $('a', p).on('click', function (e) {
+      e.preventDefault()
+      $(this).parent().parent().hide()
+      const starting = $(this).data('starting')
+      for (let i = starting; i < pageLimit + starting; i++) {
+        const comment = document.getElementById(`neznam-atproto-comment-${i}`)
+        if (comment) {
+          comment.style.display = 'block'
+        } else {
+          break
+        }
+      }
+    })
+    div.appendChild(p)
+    li.appendChild(div)
   }
 
   // https://stackoverflow.com/a/494348
@@ -120,10 +169,43 @@
     return text.replaceAll('"', '&quot;')
   }
 
-  function escapeHTML (text) {
-    const div = document.createElement('div')
-    div.innerText = text.trim()
-    return div.innerHTML
+  function utf8Slice (str, start, end) {
+    const encoder = new TextEncoder()
+    const encoded = encoder.encode(str)
+    return new TextDecoder('utf-8').decode(encoded.slice(start, end))
+  }
+
+  function escapeHTML (str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+  }
+
+  function embedFacets (text, facets) {
+    if (!facets || facets.length === 0) return escapeHTML(text)
+    const randomChar = (Math.random() + 1).toString(36)
+
+    // Embed facets by iterating from the end to avoid index conflicts
+    for (let i = facets.length - 1; i >= 0; i--) {
+      const facet = facets[i]
+      const { byteStart, byteEnd } = facet.index
+      let replacement = utf8Slice(text, byteStart, byteEnd)
+      if (facet.features[0].$type === 'app.bsky.richtext.facet#link') {
+        replacement = `${randomChar}a style="color:red" href="${facet.features[0].uri}" rel="ugc external nofollow" target="_blank">${replacement}${randomChar}/a>`
+      } else if (facet.features[0].$type === 'app.bsky.richtext.facet#mention') {
+        replacement = `${randomChar}a style="color:red" href="https://bsky.app/profile/${facet.features[0].did}" rel="ugc external nofollow" target="_blank">${replacement}${randomChar}/a>`
+      } else if (facet.features[0].$type === 'app.bsky.richtext.facet#tag') {
+        replacement = `${randomChar}a style="color:red" href="https://bsky.app/hashtag/${facet.features[0].tag}" rel="ugc external nofollow" target="_blank">${replacement}${randomChar}/a>`
+      } else {
+        console.log(`Unrecognized facet type: ${facet.features[0].$type}`)
+        continue
+      }
+
+      text =
+        utf8Slice(text, 0, byteStart) +
+        replacement +
+        utf8Slice(text, byteEnd)
+    }
+
+    return escapeHTML(text).replaceAll(randomChar, '<')
   }
 
   function renderComment (comment) {
@@ -149,7 +231,7 @@
       '##POST_DATE_ISO##': replyDate.toISOString(),
       '##POST_DATA_HUMAN##': replyDate.toLocaleString(),
       '##POST_URL##': ToBskyUrl(comment.post.uri),
-      '##POST_TEXT##': escapeHTML(comment.post.record.text),
+      '##POST_TEXT##': embedFacets(comment.post.record.text, comment.post.record.facets),
       '##REPLY_COUNT##': replyCount,
       '##REPOST_COUNT##': repostCount,
       '##LIKE_COUNT##': likeCount
