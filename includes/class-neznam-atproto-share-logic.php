@@ -150,7 +150,7 @@ class Neznam_Atproto_Share_Logic {
 		}
 		$response_body = $body['body'];
 		$body          = json_decode( $body['body'], true );
-		if ( $this->validate_did( $body['did'] ) ) {
+		if ( ! empty( $body['did'] ) && $this->validate_did( $body['did'] ) ) {
 			$this->log( 'DEBUG', 'Successfully validated DID.' );
 			update_option( $this->plugin_name . '-did', $body['did'] );
 			return $body['did'];
@@ -176,6 +176,45 @@ class Neznam_Atproto_Share_Logic {
 			$did = $this->did_request();
 		}
 		return $did;
+	}
+
+	/**
+	 * Get a record's details
+	 *
+	 * @param string $rkey Record key.
+	 *
+	 * @return false|mixed
+	 */
+	public function record_request( $rkey ) {
+		if ( empty( $this->url ) ) {
+			$this->set_url();
+		}
+		$url = trailingslashit( $this->url ) . 'xrpc/com.atproto.repo.getRecord';
+		$did = get_option( $this->plugin_name . '-did' );
+		if ( ! $did ) {
+			$did = $this->did_request();
+		}
+		$query = array(
+			'collection' => 'app.bsky.feed.post',
+			'repo'       => $did,
+			'rkey'       => $rkey,
+		);
+		$body  = wp_remote_get(
+			$url . '?' . http_build_query( $query ),
+			array(
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $this->access_token,
+					'Content-Type'  => 'application/json',
+				),
+			)
+		);
+
+		if ( is_wp_error( $body ) ) {
+			$this->log( 'FATAL', $body );
+			return false;
+		}
+		$this->log( 'DEBUG', $body['body'] );
+		return json_decode( $body['body'], true );
 	}
 
 	/**
@@ -286,6 +325,7 @@ class Neznam_Atproto_Share_Logic {
 		}
 		$response_body = $body['body'];
 		$body          = json_decode( $response_body, true );
+		$this->log( 'DEBUG', $body['body'] );
 		if ( isset( $body['uri'] ) && $this->validate_at_uri( $body['uri'] ) ) {
 			update_post_meta( $post->ID, $this->plugin_name . '-uri', $body['uri'] );
 			$uri = explode( '/', $body['uri'] );
@@ -460,6 +500,11 @@ class Neznam_Atproto_Share_Logic {
 	private function validate_did( $did ) {
 		// Derived from DID Syntax published at https://atproto.com/specs/did.
 
+		if ( empty( $did ) ) {
+			$this->log( 'WARN', 'Received an empty DID, which should not happen.' );
+			return false;
+		}
+
 		// Skip potential PHP regex DoS by confirming string length in under spec max (2kb).
 		if ( strlen( $did ) > 2048 ) {
 			$this->log( 'WARN', 'Received a DID of ' . strlen( $jwt ) . ', which should not happen.' );
@@ -479,9 +524,14 @@ class Neznam_Atproto_Share_Logic {
 	private function validate_at_uri( $uri ) {
 		// Derived from URI Syntax published at https://atproto.com/specs/at-uri-scheme.
 
+		if ( empty( $uri ) ) {
+			$this->log( 'WARN', 'Received an empty AT-URI, which should not happen.' );
+			return false;
+		}
+
 		// Skip potential PHP regex DoS by confirming string length in under spec max (8kb).
 		if ( strlen( $uri ) > 8192 ) {
-			$this->log( 'WARN', 'Received an AT URI of ' . strlen( $jwt ) . ', which should not happen.' );
+			$this->log( 'WARN', 'Received an AT-URI of ' . strlen( $jwt ) . ', which should not happen.' );
 			return false;
 		}
 
@@ -498,6 +548,11 @@ class Neznam_Atproto_Share_Logic {
 	private function validate_jwt( $jwt ) {
 		// Derived from URI Syntax published at https://atproto.com/specs/at-uri-scheme.
 
+		if ( empty( $jwt ) ) {
+			$this->log( 'WARN', 'Received an empty JWT, which should not happen.' );
+			return false;
+		}
+
 		// Assume any JWT longer than 16k is invalid because it won't be accepted in a HTTP header.
 		if ( strlen( $jwt ) > 16384 ) {
 			$this->log( 'WARN', 'Received a JWT of ' . strlen( $jwt ) . ', which should not happen.' );
@@ -513,7 +568,7 @@ class Neznam_Atproto_Share_Logic {
 	 * @param string $log_level Must be either FATAL, ERROR, WARN, INFO or DEBUG.
 	 * @param mixed  $message Output to be written to the error log.
 	 */
-	private function log( $log_level, $message ) {
+	public function log( $log_level, $message ) {
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 			return;
 		}
