@@ -259,7 +259,7 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
-		$image_path = get_the_post_thumbnail_url( $post->ID, 'large' );// TODO: Add option to select image and size.
+		$image_path = $this->get_thumbnail_local_path( $post->ID, 'large' );
 		$blob       = null;
 		if ( $image_path ) {
 			$blob = $this->upload_blob( $image_path );
@@ -324,7 +324,6 @@ class Neznam_Atproto_Share_Logic {
 		}
 		$response_body = $body['body'];
 		$body          = json_decode( $response_body, true );
-		$this->log( 'DEBUG', $body['body'] );
 		if ( isset( $body['uri'] ) && $this->validate_at_uri( $body['uri'] ) ) {
 			update_post_meta( $post->ID, $this->plugin_name . '-uri', $body['uri'] );
 			$uri = explode( '/', $body['uri'] );
@@ -444,6 +443,34 @@ class Neznam_Atproto_Share_Logic {
 	}
 
 	/**
+	 * Gets the local file path for an image of a post.
+	 *
+	 * @param int    $post_id Post being analyzed.
+	 * @param string $image_size Optional. Image size to retrieve. Defaults to "large".
+	 *
+	 * @return string|null
+	 */
+	public function get_thumbnail_local_path( $post_id, $image_size = 'large' ) {
+		if ( ! has_post_thumbnail( $post_id ) ) {
+			return null;
+		}
+
+		$thumbnail_id   = get_post_thumbnail_id( $post_id );
+		$thumbnail_data = wp_get_attachment_image_src( $thumbnail_id, $image_size );
+		if ( ! $thumbnail_data || ! isset( $thumbnail_data[0] ) ) {
+			return null;
+		}
+		$thumbnail_url = $thumbnail_data[0];
+		$upload_dir    = wp_get_upload_dir();
+		if ( strpos( $thumbnail_url, $upload_dir['baseurl'] ) !== false ) {
+			$local_path = str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $thumbnail_url );
+			return $local_path;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Upload the image to the server.
 	 *
 	 * @param string $path Path of the file.
@@ -452,12 +479,14 @@ class Neznam_Atproto_Share_Logic {
 	 */
 	private function upload_blob( $path ) {
 		if ( ! $path ) {
+			$this->log( 'WARN', 'Attempted `upload_blob` with empty $path. Skipping.' );
 			return array();
 		}
 		global $wp_filesystem;
 		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
 		if ( ! $wp_filesystem->exists( $path ) ) {
+			$this->log( 'WARN', 'Unable to find file "' . $path . '". Skipping.' );
 			return array();
 		}
 		$size = $wp_filesystem->size( $path );
@@ -484,8 +513,8 @@ class Neznam_Atproto_Share_Logic {
 
 			return $this->upload_blob( $path );
 		}
+		$this->log( 'DEBUG', 'Blob successfully uploaded. - ' . $body['body'] );
 		$body = json_decode( $body['body'], true );
-		$this->log( 'DEBUG', 'Blob successfully uploaded.' );
 		return $body['blob'];
 	}
 

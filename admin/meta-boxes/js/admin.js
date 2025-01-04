@@ -25,16 +25,16 @@
         return
       }
       $(`#${pluginName}-text-to-publish`).val(boxData.text_to_publish)
-      if (boxData.should_publish) {
+      if (boxData.should_publish && boxData.should_publish !== '0') {
         $(`#${pluginName}-should-publish`).prop('checked', true)
       }
-      $(`#${pluginName}-should-publish`).prop('checked', true)
       $(`#${pluginName}-publish-post`).show()
       if (boxData.published) {
         $(`#${pluginName}-switch-link-post`).show()
       }
     }
     processUI()
+
     $publishedBox.find('.update').on('click', function () {
       const $update = $(this)
       $update.prop('disabled', true)
@@ -58,6 +58,15 @@
         }
       )
     })
+
+    $(`#${pluginName}-text-to-publish`).on('blur', function () {
+      $publishBox.find('.update').data('skip-post', true)
+      $publishBox.find('.update').trigger('click')
+    })
+    $(`#${pluginName}-should-publish`).on('change', function () {
+      $publishBox.find('.update').data('skip-post', true)
+      $publishBox.find('.update').trigger('click')
+    })
     $publishBox.find('.update').on('click', function () {
       const $update = $(this)
       $update.prop('disabled', true)
@@ -68,8 +77,9 @@
           post_id: jQuery('#post_ID').val(),
           nonce: boxData.nonce,
           subaction: 'publish',
-          publish: $(`#${pluginName}-should-publish`).is(':checked'),
-          text: $(`#${pluginName}-text-to-publish`).val()
+          publish: $(`#${pluginName}-should-publish`).is(':checked') ? 1 : 0,
+          text: $(`#${pluginName}-text-to-publish`).val(),
+          skip_post: $publishBox.find('.update').data('skip-post') ? 1 : 0
         }, function (response) {
           $update.prop('disabled', false)
           $publishBox.find('.spinner').removeClass('is-active')
@@ -80,9 +90,11 @@
           $(`#${pluginName}-message`).hide()
           boxData = response.data
           processUI()
+          $publishBox.find('.update').data('skip-post', false)
         }
       )
     })
+
     $linkBox.find('.update').on('click', function () {
       const $update = $(this)
       $update.prop('disabled', true)

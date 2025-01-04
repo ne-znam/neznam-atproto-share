@@ -152,7 +152,26 @@ class Neznam_Atproto_Share_Admin_Metabox {
 				name="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"
 				type="text"
 				value=""/>
-			<p class="howto"><?php esc_html_e( 'Text to add as status', 'neznam-atproto-share' ); ?></p>
+			<p class="howto">
+				<?php esc_html_e( 'Text to add as status. If blank, will use: ', 'neznam-atproto-share' ); ?>
+				<code>
+				<?php
+				$cur_format = get_option( $this->plugin_name . '-post-format' );
+				if ( empty( $cur_format ) ) {
+					$cur_format = 'post_title';
+				}
+				if ( 'post_title' === $cur_format ) {
+					echo esc_html( strtolower( __( 'Post Title', 'neznam-atproto-share ' ) ) );
+				}
+				if ( 'post_excerpt' === $cur_format ) {
+					echo esc_html( strtolower( __( 'Post Excerpt', 'neznam-atproto-share ' ) ) );
+				}
+				if ( 'post_title_and_excerpt' === $cur_format ) {
+					echo esc_html( strtolower( __( 'Post Title: Post Excerpt', 'neznam-atproto-share ' ) ) );
+				}
+				?>
+				</code>
+			</p>
 			<button type="button" class="update">Update</button>
 			<span class="spinner"></span>
 			<hr>
@@ -204,13 +223,15 @@ class Neznam_Atproto_Share_Admin_Metabox {
 			delete_post_meta( $post_id, $this->plugin_name . '-http-uri' );
 			wp_send_json_success( $this->get_ajax_data( $post_id ) );
 		} elseif ( 'publish' === $subaction ) {
+			$skip_post       = ! empty( $_POST['skip_post'] ) ? 1 : 0;
 			$should_publish  = ! empty( $_POST['publish'] ) ? 1 : 0;
 			$text_to_publish = isset( $_POST['text'] ) ? sanitize_text_field( wp_unslash( $_POST['text'] ) ) : '';
 			update_post_meta( $post_id, $this->plugin_name . '-should-publish', $should_publish );
 			update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
-			if ( 'publish' === get_post_status( $post_id ) ) {
-				$this->plugin_admin->publish_post( $post_id, get_post( $post_id ) );
+			if ( $skip_post || ! $should_publish || 'publish' !== get_post_status( $post_id ) ) {
+				wp_send_json_success( $this->get_ajax_data( $post_id ) );
 			}
+			$this->plugin_admin->publish_post( $post_id, get_post( $post_id ) );
 			$share_info = get_post_meta( $post_id, $this->plugin_name . '-uri', true );
 			if ( ! empty( $share_info ) ) {
 				wp_send_json_success( $this->get_ajax_data( $post_id ) );

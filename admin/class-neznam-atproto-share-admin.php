@@ -527,7 +527,7 @@ class Neznam_Atproto_Share_Admin {
 
 		$should_publish = get_post_meta( $post_id, $this->plugin_name . '-should-publish', true );
 
-		if ( $should_publish ) {
+		if ( $should_publish && '0' !== $should_publish ) {
 			$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
 			$logic->post_message( $post );
 		}
