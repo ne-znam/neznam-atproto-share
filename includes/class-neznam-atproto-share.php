@@ -110,6 +110,11 @@ class Neznam_Atproto_Share {
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-neznam-atproto-share-admin.php';
 
 		/**
+		 * The class responsible for managing post metaboxes in the admin area.
+		 */
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-neznam-atproto-share-admin-metabox.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the public area.
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'public/class-neznam-atproto-share-public.php';
@@ -147,13 +152,11 @@ class Neznam_Atproto_Share {
 	 */
 	private function define_hooks() {
 
-		$plugin_admin = new Neznam_Atproto_Share_Admin( $this->get_plugin_name(), $this->get_version() );
 		$plugin_share = new Neznam_Atproto_Share_Logic( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Neznam_Atproto_Share_Admin( $this->get_plugin_name(), $this->get_version(), $plugin_share );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_page' );
-		$this->loader->add_action( 'admin_init', $plugin_admin, 'add_settings' );
-		$this->loader->add_action( 'save_post', $plugin_admin, 'edit_post', 10, 2 );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'admin_init' );
 		$this->loader->add_action( 'wp_after_insert_post', $plugin_admin, 'publish_post', 10, 2 );
-		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_meta_box' );
 		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'cron_schedule' );
 		$this->loader->add_filter( 'plugin_action_links_' . $this->plugin_name . '/' . $this->plugin_name . '.php', $plugin_admin, 'settings_link' );
 

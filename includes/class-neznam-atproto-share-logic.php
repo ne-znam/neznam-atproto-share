@@ -150,7 +150,7 @@ class Neznam_Atproto_Share_Logic {
 		}
 		$response_body = $body['body'];
 		$body          = json_decode( $body['body'], true );
-		if ( $this->validate_did( $body['did'] ) ) {
+		if ( ! empty( $body['did'] ) && $this->validate_did( $body['did'] ) ) {
 			$this->log( 'DEBUG', 'Successfully validated DID.' );
 			update_option( $this->plugin_name . '-did', $body['did'] );
 			return $body['did'];
@@ -176,6 +176,44 @@ class Neznam_Atproto_Share_Logic {
 			$did = $this->did_request();
 		}
 		return $did;
+	}
+
+	/**
+	 * Get a record's details
+	 *
+	 * @param string $rkey Record key.
+	 *
+	 * @return false|mixed
+	 */
+	public function record_request( $rkey ) {
+		if ( empty( $this->url ) ) {
+			$this->set_url();
+		}
+		$url = trailingslashit( $this->url ) . 'xrpc/com.atproto.repo.getRecord';
+		$did = get_option( $this->plugin_name . '-did' );
+		if ( ! $did ) {
+			$did = $this->did_request();
+		}
+		$query = array(
+			'collection' => 'app.bsky.feed.post',
+			'repo'       => $did,
+			'rkey'       => $rkey,
+		);
+		$body  = wp_remote_get(
+			$url . '?' . http_build_query( $query ),
+			array(
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $this->access_token,
+					'Content-Type'  => 'application/json',
+				),
+			)
+		);
+
+		if ( is_wp_error( $body ) ) {
+			$this->log( 'FATAL', $body );
+			return false;
+		}
+		return json_decode( $body['body'], true );
 	}
 
 	/**
@@ -221,7 +259,7 @@ class Neznam_Atproto_Share_Logic {
 		if ( ! $this->access_token ) {
 			$this->authorize();
 		}
-		$image_path = get_the_post_thumbnail_url( $post->ID, 'large' );// TODO: Add option to select image and size.
+		$image_path = $this->get_thumbnail_local_path( $post->ID, 'large' );
 		$blob       = null;
 		if ( $image_path ) {
 			$blob = $this->upload_blob( $image_path );
@@ -405,6 +443,34 @@ class Neznam_Atproto_Share_Logic {
 	}
 
 	/**
+	 * Gets the local file path for an image of a post.
+	 *
+	 * @param int    $post_id Post being analyzed.
+	 * @param string $image_size Optional. Image size to retrieve. Defaults to "large".
+	 *
+	 * @return string|null
+	 */
+	public function get_thumbnail_local_path( $post_id, $image_size = 'large' ) {
+		if ( ! has_post_thumbnail( $post_id ) ) {
+			return null;
+		}
+
+		$thumbnail_id   = get_post_thumbnail_id( $post_id );
+		$thumbnail_data = wp_get_attachment_image_src( $thumbnail_id, $image_size );
+		if ( ! $thumbnail_data || ! isset( $thumbnail_data[0] ) ) {
+			return null;
+		}
+		$thumbnail_url = $thumbnail_data[0];
+		$upload_dir    = wp_get_upload_dir();
+		if ( strpos( $thumbnail_url, $upload_dir['baseurl'] ) !== false ) {
+			$local_path = str_replace( $upload_dir['baseurl'], $upload_dir['basedir'], $thumbnail_url );
+			return $local_path;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Upload the image to the server.
 	 *
 	 * @param string $path Path of the file.
@@ -413,12 +479,14 @@ class Neznam_Atproto_Share_Logic {
 	 */
 	private function upload_blob( $path ) {
 		if ( ! $path ) {
+			$this->log( 'WARN', 'Attempted `upload_blob` with empty $path. Skipping.' );
 			return array();
 		}
 		global $wp_filesystem;
 		require_once ABSPATH . '/wp-admin/includes/file.php';
 		WP_Filesystem();
 		if ( ! $wp_filesystem->exists( $path ) ) {
+			$this->log( 'WARN', 'Unable to find file "' . $path . '". Skipping.' );
 			return array();
 		}
 		$size = $wp_filesystem->size( $path );
@@ -445,8 +513,8 @@ class Neznam_Atproto_Share_Logic {
 
 			return $this->upload_blob( $path );
 		}
+		$this->log( 'DEBUG', 'Blob successfully uploaded. - ' . $body['body'] );
 		$body = json_decode( $body['body'], true );
-		$this->log( 'DEBUG', 'Blob successfully uploaded.' );
 		return $body['blob'];
 	}
 
@@ -459,6 +527,11 @@ class Neznam_Atproto_Share_Logic {
 	 */
 	private function validate_did( $did ) {
 		// Derived from DID Syntax published at https://atproto.com/specs/did.
+
+		if ( empty( $did ) ) {
+			$this->log( 'WARN', 'Received an empty DID, which should not happen.' );
+			return false;
+		}
 
 		// Skip potential PHP regex DoS by confirming string length in under spec max (2kb).
 		if ( strlen( $did ) > 2048 ) {
@@ -479,9 +552,14 @@ class Neznam_Atproto_Share_Logic {
 	private function validate_at_uri( $uri ) {
 		// Derived from URI Syntax published at https://atproto.com/specs/at-uri-scheme.
 
+		if ( empty( $uri ) ) {
+			$this->log( 'WARN', 'Received an empty AT-URI, which should not happen.' );
+			return false;
+		}
+
 		// Skip potential PHP regex DoS by confirming string length in under spec max (8kb).
 		if ( strlen( $uri ) > 8192 ) {
-			$this->log( 'WARN', 'Received an AT URI of ' . strlen( $jwt ) . ', which should not happen.' );
+			$this->log( 'WARN', 'Received an AT-URI of ' . strlen( $jwt ) . ', which should not happen.' );
 			return false;
 		}
 
@@ -498,6 +576,11 @@ class Neznam_Atproto_Share_Logic {
 	private function validate_jwt( $jwt ) {
 		// Derived from URI Syntax published at https://atproto.com/specs/at-uri-scheme.
 
+		if ( empty( $jwt ) ) {
+			$this->log( 'WARN', 'Received an empty JWT, which should not happen.' );
+			return false;
+		}
+
 		// Assume any JWT longer than 16k is invalid because it won't be accepted in a HTTP header.
 		if ( strlen( $jwt ) > 16384 ) {
 			$this->log( 'WARN', 'Received a JWT of ' . strlen( $jwt ) . ', which should not happen.' );
@@ -513,7 +596,7 @@ class Neznam_Atproto_Share_Logic {
 	 * @param string $log_level Must be either FATAL, ERROR, WARN, INFO or DEBUG.
 	 * @param mixed  $message Output to be written to the error log.
 	 */
-	private function log( $log_level, $message ) {
+	public function log( $log_level, $message ) {
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 			return;
 		}

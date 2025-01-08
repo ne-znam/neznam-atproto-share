@@ -36,17 +36,38 @@ class Neznam_Atproto_Share_Admin {
 	private $version;
 
 	/**
+	 * The Neznam_Atproto_Share_Logic object.
+	 *
+	 * @since    2.1.0
+	 * @access   private
+	 * @var      \Neznam_Atproto_Share_Logic $plugin_share The object for shared logic.
+	 */
+	private $plugin_share;
+
+	/**
+	 * The Neznam_Atproto_Share_Admin_Metabox object.
+	 *
+	 * @since    2.1.0
+	 * @access   private
+	 * @var      \Neznam_Atproto_Share_Admin_Metabox $plugin_share The object for metabox-related functions.
+	 */
+	private $plugin_metabox;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @param string $plugin_name The name of this plugin.
 	 * @param string $version The version of this plugin.
+	 * @param object $plugin_share The Neznam_Atproto_Share_Logic object.
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $plugin_share ) {
 
-		$this->plugin_name = $plugin_name;
-		$this->version     = $version;
+		$this->plugin_name    = $plugin_name;
+		$this->version        = $version;
+		$this->plugin_share   = $plugin_share;
+		$this->plugin_metabox = new Neznam_Atproto_Share_Admin_Metabox( $this->plugin_name, $this->version, $this->plugin_share, $this );
 	}
 
 	/**
@@ -100,11 +121,17 @@ class Neznam_Atproto_Share_Admin {
 	}
 
 	/**
-	 * Add all settings
+	 * Add all settings and attach metabox management.
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_settings() {
+	public function admin_init() {
+		if ( get_option( $this->plugin_name . '-did' ) ) {
+			add_action( 'admin_enqueue_scripts', array( $this->plugin_metabox, 'meta_box_scripts' ) );
+			add_action( 'add_meta_boxes', array( $this->plugin_metabox, 'add_meta_box' ) );
+			add_action( 'wp_ajax_' . $this->plugin_name, array( $this->plugin_metabox, 'ajax_handler' ) );
+		}
+
 		register_setting(
 			'neznam-atproto-share',
 			$this->plugin_name . '-url',
@@ -203,7 +230,7 @@ class Neznam_Atproto_Share_Admin {
 
 		add_settings_field(
 			$this->plugin_name . '-url',
-			'Atproto URL',
+			'ATProto URL',
 			function () {
 				?>
 				<input type="text" name="<?php echo esc_html( $this->plugin_name ); ?>-url" value="<?php echo esc_html( get_option( $this->plugin_name . '-url' ) ); ?>" /><br>
@@ -414,7 +441,7 @@ class Neznam_Atproto_Share_Admin {
 		$logic->set_url( sanitize_url( wp_unslash( $_POST[ $this->plugin_name . '-url' ] ) ) );
 		$logic->set_handle( $handle );
 		if ( ! $logic->did_request() ) {
-			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Handle is incorrect', 'neznam-atproto-share' ) );
+			add_settings_error( $this->plugin_name . '-handle', 'handle', __( 'Handle is incorrect - ', 'neznam-atproto-share' ) . esc_html( $handle ) );
 		}
 		return $handle;
 	}
@@ -478,33 +505,6 @@ class Neznam_Atproto_Share_Admin {
 	/**
 	 * On save post save the information for reposting on atproto.
 	 *
-	 * @param int $post_id Post ID.
-	 *
-	 * @return void
-	 */
-	public function edit_post( $post_id ) {
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-			return;
-		}
-
-		if ( ! isset( $_POST[ $this->plugin_name . 'should-publish-nonce' ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . 'should-publish-nonce' ] ) ), 'save-should-publish' ) ) {
-			return;
-		}
-
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		$should_publish  = isset( $_POST[ $this->plugin_name . '-should-publish' ] ) ? 1 : 0;
-		$text_to_publish = isset( $_POST[ $this->plugin_name . '-text-to-publish' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-text-to-publish' ] ) ) : '';
-
-		update_post_meta( $post_id, $this->plugin_name . '-should-publish', $should_publish );
-		update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
-	}
-
-	/**
-	 * On save post save the information for reposting on atproto.
-	 *
 	 * @param int     $post_id Post ID.
 	 * @param WP_Post $post The Post itself.
 	 *
@@ -527,79 +527,10 @@ class Neznam_Atproto_Share_Admin {
 
 		$should_publish = get_post_meta( $post_id, $this->plugin_name . '-should-publish', true );
 
-		if ( $should_publish ) {
+		if ( $should_publish && '0' !== $should_publish ) {
 			$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );
 			$logic->post_message( $post );
 		}
-	}
-
-	/**
-	 * Add meta box to post
-	 *
-	 * @return void
-	 */
-	public function add_meta_box() {
-		add_meta_box(
-			$this->plugin_name . '-meta-box',
-			__( 'Atproto Share', 'neznam-atproto-share' ),
-			array(
-				$this,
-				'render_meta_box',
-			),
-			'post',
-			'side',
-			'high',
-		);
-	}
-
-	/**
-	 * Render meta box
-	 *
-	 * @return void
-	 */
-	public function render_meta_box() {
-		$url = get_post_meta( get_the_ID(), $this->plugin_name . '-http-uri', true );
-		if ( ! $url ) {
-			$uri = get_post_meta( get_the_ID(), $this->plugin_name . '-uri', true );
-			if ( $uri ) {
-				$uri    = explode( '/', $uri );
-				$id     = array_pop( $uri );
-				$handle = get_option( $this->plugin_name . '-handle' );
-				$url    = 'https://bsky.app/profile/' . $handle . '/post/' . $id;
-			}
-		}
-		if ( $url ) {
-			?>
-			<p><?php esc_html_e( 'Published on Atproto', 'neznam-atproto-share' ); ?></p>
-			<p><a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noreferrer"><?php esc_html_e( 'View on Bluesky', 'neznam-atproto-share' ); ?></a></p>
-			<?php
-			return;
-		}
-		$should_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-should-publish', true );
-
-		if ( false === $should_publish || '' === $should_publish ) {
-			$should_publish = get_option( $this->plugin_name . '-default' );
-		}
-		$text_to_publish = get_post_meta( get_the_ID(), $this->plugin_name . '-text-to-publish', true );
-		?>
-		<input
-			id="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"
-			name="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"
-			type="checkbox"
-			value="1" <?php checked( $should_publish ); ?>>
-		<label
-			for="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"><?php esc_html_e( 'Publish on Atproto?', 'neznam-atproto-share' ); ?></label>
-		<p class="howto"><?php esc_html_e( 'Publishes post to Atproto network.', 'neznam-atproto-share' ); ?></p>
-		<label
-			for="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"><?php esc_html_e( 'Text to publish', 'neznam-atproto-share' ); ?></label>
-		<input
-			id="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"
-			name="<?php echo esc_html( $this->plugin_name ); ?>-text-to-publish"
-			type="text"
-			value="<?php echo esc_html( $text_to_publish ); ?>"/>
-		<p class="howto"><?php esc_html_e( 'Text to add as status', 'neznam-atproto-share' ); ?></p>
-		<?php wp_nonce_field( 'save-should-publish', $this->plugin_name . 'should-publish-nonce' ); ?>
-		<?php
 	}
 
 	/**
