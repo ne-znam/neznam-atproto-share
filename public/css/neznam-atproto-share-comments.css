@@ -1,65 +1,88 @@
+#comments.neznam-atproto-share-comments div.comment-overview {
+	border-top: 1px solid var(--wp--preset--color--border-dark, "#3f3856");
+	border-bottom: 1px solid var(--wp--preset--color--border-light, "#e6e7fb");
+	padding: 10px 0;
+	margin-bottom: 10px;
+}
+
 #comments.neznam-atproto-share-comments ol {
-    list-style: none;
+	list-style: none;
 }
 
 #comments.neznam-atproto-share-comments ol.comment-list {
-    padding-inline-start: 0;
+	padding-inline-start: 0;
 }
 
 #comments.neznam-atproto-share-comments ol article {
-    display: flex;
-    gap: 5px;
-    flex-direction: column;
-    margin-bottom: 30px;
-    font-size: 90%;
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	margin-bottom: 30px;
+	font-size: 90%;
 }
-#comments.neznam-atproto-share-comments ol .comment-meta {
-    display: flex;
-    flex-direction: row;
-    margin: 0;
-}
-#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar {
-    flex: 0 0 auto;
-    width: 50px;
-}
-#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar img, #comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar svg {
-    height: 42px;
-    width: 42px;
-    clip-path: circle();
-}
-#comments.neznam-atproto-share-comments ol .comment-metadata {
-    display: flex;
-    flex-direction: column;
-}
-#comments.neznam-atproto-share-comments ol .comment-metadata .comment-author {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
-}
-#comments.neznam-atproto-share-comments ol .comment-metadata .comment-time {
-    margin: 0;
-    font-size: 16px;
-}
-#comments.neznam-atproto-share-comments ol .comment-metadata time {
-    margin: 0;
-}
-#comments.neznam-atproto-share-comments a {
-    text-decoration: none;
-}  
-#comments.neznam-atproto-share-comments a:hover, #comments.neznam-atproto-share-comments a:active {
-    text-decoration: underline;
-}  
 
-#comments.neznam-atproto-share-comments .comment-reply-link, #comments.neznam-atproto-share-comments .comment-repost-link, #comments.neznam-atproto-share-comments .comment-like-link, #comments.neznam-atproto-share-comments .comment-quote-link {
-    display: inline-block;
-    background-position: left 0 top 0;
-    background-repeat: no-repeat;
-    padding: 0 0 0 25px;
-    line-height: 25px;
-    font-size: 15px;
-    border: 0;
-    font-weight: normal;
+#comments.neznam-atproto-share-comments ol .comment-meta {
+	display: flex;
+	flex-direction: row;
+	margin: 0;
 }
+
+#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar {
+	flex: 0 0 auto;
+	width: 50px;
+}
+
+#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar img,
+#comments.neznam-atproto-share-comments ol .comment-meta .comment-avatar svg {
+	height: 42px;
+	width: 42px;
+	clip-path: circle();
+}
+
+#comments.neznam-atproto-share-comments ol .comment-metadata {
+	display: flex;
+	flex-direction: column;
+}
+
+#comments.neznam-atproto-share-comments ol .comment-metadata .comment-author {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 700;
+}
+
+#comments.neznam-atproto-share-comments ol .comment-metadata .comment-time {
+	margin: 0;
+	font-size: 16px;
+}
+
+#comments.neznam-atproto-share-comments ol .comment-metadata time {
+	margin: 0;
+}
+
+#comments.neznam-atproto-share-comments a {
+	text-decoration: none;
+}
+
+#comments.neznam-atproto-share-comments a:hover,
+#comments.neznam-atproto-share-comments a:active {
+	text-decoration: underline;
+}
+
+#comments.neznam-atproto-share-comments .comment-reply-link,
+#comments.neznam-atproto-share-comments .comment-repost-link,
+#comments.neznam-atproto-share-comments .comment-like-link,
+#comments.neznam-atproto-share-comments .comment-quote-link {
+	display: inline-block;
+	background-position: left 0 top 0;
+	background-repeat: no-repeat;
+	padding: 0 0 0 25px;
+	line-height: 25px;
+	font-size: 15px;
+	border: 0;
+	font-weight: 400;
+}
+
+/* stylelint-disable */
 #comments.neznam-atproto-share-comments .comment-reply-link {
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="stroke:currentColor"><path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M11 16.517c4.418 0 8-3.284 8-7.017S15.418 3 11 3S3 6.026 3 9.759c0 1.457.546 2.807 1.475 3.91L3.5 18.25l3.916-2.447a9.2 9.2 0 0 0 3.584.714" /></svg>');
 }
@@ -72,3 +95,4 @@
 #comments.neznam-atproto-share-comments .comment-quote-link {
     background-image: url('data:image/svg+xml;utf8,<svg height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" transform="translate(4 3)"><path d="m12.5 12.5v-10c0-1.1045695-.8954305-2-2-2h-8c-1.1045695 0-2 .8954305-2 2v10c0 1.1045695.8954305 2 2 2h8c1.1045695 0 2-.8954305 2-2z"/><path d="m3.5 5.5h5"/><path d="m3.5 7.5h6"/><path d="m3.5 9.5h3"/></g></svg>');
 }
+/* stylelint-enable */
