@@ -156,7 +156,7 @@ class Neznam_Atproto_Share {
 		$plugin_admin = new Neznam_Atproto_Share_Admin( $this->get_plugin_name(), $this->get_version(), $plugin_share );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_page' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'admin_init' );
-		$this->loader->add_action( 'wp_after_insert_post', $plugin_admin, 'publish_post', 10, 2 );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'save_post', 10, 2 );
 		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'cron_schedule' );
 		$this->loader->add_filter( 'plugin_action_links_' . $this->plugin_name . '/' . $this->plugin_name . '.php', $plugin_admin, 'settings_link' );
 

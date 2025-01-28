@@ -510,8 +510,33 @@ class Neznam_Atproto_Share_Admin {
 	 *
 	 * @return void
 	 */
-	public function publish_post( $post_id, $post ) {
-		if ( get_post_status( $post_id ) !== 'publish' ) {
+	public function save_post( $post_id, $post ) {
+		if ( 'publish' === get_post_status( $post_id ) ) {
+			if ( isset( $_POST[ $this->plugin_name . '-should-publish' ] ) ) {
+				if ( wp_verify_nonce( $_POST[ $this->plugin_name . '-default-nonce' ], 'default' ) ) {
+					$should_publish  = ! empty( $_POST[ $this->plugin_name . '-should-publish' ] ) ? 1 : 0;
+					$text_to_publish = isset( $_POST[ $this->plugin_name . '-text-to-publish' ] ) ? sanitize_text_field( wp_unslash( $_POST[ $this->plugin_name . '-text-to-publish' ] ) ) : '';
+					update_post_meta( $post_id, $this->plugin_name . '-should-publish', $should_publish );
+					update_post_meta( $post_id, $this->plugin_name . '-text-to-publish', $text_to_publish );
+				}
+			}
+			$this->publish_post( $post );
+		}
+	}
+
+	/**
+	 * On save post save the information for reposting on atproto.
+	 *
+	 * @param WP_Post $post The Post itself.
+	 *
+	 * @return void
+	 */
+	public function publish_post( $post ) {
+		if ( empty( $post->ID ) ) {
+			return;
+		}
+
+		if ( get_post_status( $post->ID ) !== 'publish' ) {
 			return;
 		}
 
@@ -520,12 +545,12 @@ class Neznam_Atproto_Share_Admin {
 			return;
 		}
 
-		$share_info = get_post_meta( $post_id, $this->plugin_name . '-uri', true );
+		$share_info = get_post_meta( $post->ID, $this->plugin_name . '-uri', true );
 		if ( $share_info ) {
 			return;
 		}
 
-		$should_publish = get_post_meta( $post_id, $this->plugin_name . '-should-publish', true );
+		$should_publish = get_post_meta( $post->ID, $this->plugin_name . '-should-publish', true );
 
 		if ( $should_publish && '0' !== $should_publish ) {
 			$logic = new Neznam_Atproto_Share_Logic( $this->plugin_name, $this->version );

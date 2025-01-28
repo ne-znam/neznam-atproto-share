@@ -137,6 +137,7 @@ class Neznam_Atproto_Share_Admin_Metabox {
 			<span class="spinner"></span>
 		</div>
 		<div id="<?php echo esc_html( $this->plugin_name ); ?>-publish-post" style="display: none">
+			<input type="hidden" name="<?php echo esc_html( $this->plugin_name ); ?>-default-nonce" value="<?php echo esc_attr( wp_create_nonce( 'default' ) ); ?>" />
 			<input
 				id="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"
 				name="<?php echo esc_html( $this->plugin_name ); ?>-should-publish"
@@ -231,7 +232,7 @@ class Neznam_Atproto_Share_Admin_Metabox {
 			if ( $skip_post || ! $should_publish || 'publish' !== get_post_status( $post_id ) ) {
 				wp_send_json_success( $this->get_ajax_data( $post_id ) );
 			}
-			$this->plugin_admin->publish_post( $post_id, get_post( $post_id ) );
+			$this->plugin_admin->publish_post( get_post( $post_id ) );
 			$share_info = get_post_meta( $post_id, $this->plugin_name . '-uri', true );
 			if ( ! empty( $share_info ) ) {
 				wp_send_json_success( $this->get_ajax_data( $post_id ) );
