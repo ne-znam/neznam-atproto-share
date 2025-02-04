@@ -277,6 +277,17 @@ class Neznam_Atproto_Share_Logic {
 				$post_text = $post->post_title;
 			}
 		}
+        $include_tags = get_option( $this->plugin_name . '-tags' );
+        $post_tags = get_the_tags($post->ID);
+
+        if ($post_tags && $include_tags) {
+            $tag_string = '';
+            foreach ($post_tags as $tag) {
+                $tag_string .= "#" . $tag->name . ' ';
+            }
+            $tag_string = trim($tag_string);
+            $post_text = $post_text . "\n" . $tag_string;
+        }
 
 		$locale = str_replace( '_', '-', get_locale() );
 
