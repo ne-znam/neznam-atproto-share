@@ -278,9 +278,9 @@ class Neznam_Atproto_Share_Logic {
 			}
 		}
         $include_tags = get_option( $this->plugin_name . '-tags' );
-        $post_tags = get_the_tags($post->ID);
 
         if ($post_tags && $include_tags) {
+            $post_tags = get_the_tags($post->ID);
             $tag_string = '';
             foreach ($post_tags as $tag) {
                 $tag_string .= "#" . $tag->name . ' ';
