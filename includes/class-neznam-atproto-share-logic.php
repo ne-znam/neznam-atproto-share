@@ -279,15 +279,17 @@ class Neznam_Atproto_Share_Logic {
 		}
         $include_tags = get_option( $this->plugin_name . '-tags' );
 
-        if ($post_tags && $include_tags) {
-            $post_tags = get_the_tags($post->ID);
-            $tag_string = '';
-            foreach ($post_tags as $tag) {
-                $tag_string .= "#" . $tag->name . ' ';
+        if ( $include_tags ) {
+            $post_tags = get_the_tags( $post->ID );
+            if ( $post_tags && !is_wp_error( $post_tags ) ) {
+                $tag_string = '';
+                foreach ( $post_tags as $tag ) {
+                    $tag_string .= "#" . $tag->name . ' ';
+                }
+                $tag_string = trim( $tag_string );
+                $post_text = $post_text . "\n" . $tag_string;
             }
-            $tag_string = trim($tag_string);
-            $post_text = $post_text . "\n" . $tag_string;
-        }
+        }   
 
 		$locale = str_replace( '_', '-', get_locale() );
 
