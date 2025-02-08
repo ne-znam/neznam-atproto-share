@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Neznam Atproto Share\n"
-"POT-Creation-Date: 2024-12-27 10:28+0100\n"
+"POT-Creation-Date: 2025-02-08 14:42+0100\n"
 "PO-Revision-Date: 2024-12-20 08:51+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,131 +22,200 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 "X-Poedit-SearchPathExcluded-1: vendor\n"
 
-#: admin/class-neznam-atproto-share-admin.php:64
+#: admin/class-neznam-atproto-share-admin-metabox.php:82
+msgid "Atproto Share"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:132
+msgid "Published on Atproto"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:133
+msgid "View on Bluesky"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:135
+msgid "Disassociate this entry with the published Atproto post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:147
+msgid "Publish on Atproto?"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:148
+msgid "Publishes post to Atproto network."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:150
+msgid "Text to publish"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:157
+msgid "Text to add as status. If blank, will use: "
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:165
+#: admin/class-neznam-atproto-share-admin.php:325
+msgid "Post Title"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:168
+#: admin/class-neznam-atproto-share-admin.php:326
+msgid "Post Excerpt"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:171
+#: admin/class-neznam-atproto-share-admin.php:327
+msgid "Post Title: Post Excerpt"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:179
+msgid "Already posted on network? Link to the post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:183
+msgid "Record key of published post"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:188
+msgid ""
+"Record key of the post. Typically a 13-character string after post/ in the "
+"URI."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:192
+msgid "Switch back to publish post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:206
+msgid "Invalid security token sent."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:216
+msgid "Permission denied to edit post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:242
+msgid "Failed to publish new post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:253
+msgid "Failed to link to existing post."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin-metabox.php:260
+msgid "Unrecognized AJAX action attempted."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:85
 msgid "Settings"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:154
+#: admin/class-neznam-atproto-share-admin.php:221
 msgid "Enter your server information to enable posting."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:157
+#: admin/class-neznam-atproto-share-admin.php:224
 msgid ""
 "Enjoying this plugin? Please <a href=\"https://wordpress.org/support/plugin/"
 "neznam-atproto-share/reviews/#new-post\" target=\"_blank\">leave a review</"
 "a> to support its development."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:179
+#: admin/class-neznam-atproto-share-admin.php:247
 msgid "Enter the URL of your provider or leave as is for BlueSky"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:205
+#: admin/class-neznam-atproto-share-admin.php:274
 msgid ""
 "Enter app password. If using BlueSky visit: <a href=\"https://bsky.app/"
 "settings/app-passwords\" target=\"_blank\">App passwords</a>"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:226
-msgid ""
-"For posts published to Bluesky, replace WordPress comments with Bluesky "
-"reply threads."
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:238
-msgid ""
-"If \"Use Bluesky Replies as Comments\" is enabled but post is not published "
-"to Bluesky, enabling this will hide default WordPress comments."
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:251
+#: admin/class-neznam-atproto-share-admin.php:296
 msgid "Enable this option to always push posts and publish."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:264
+#: admin/class-neznam-atproto-share-admin.php:309
 msgid ""
 "Check this if you have trouble publishing posts. This will use cronjob to "
 "publish."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:280
-msgid "Post Title"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:281
-msgid "Post Excerpt"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:282
-msgid "Post Title: Post Excerpt"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:298
+#: admin/class-neznam-atproto-share-admin.php:343
 msgid ""
 "If the \"Text to publish\" field is blank, this information will populate "
 "the post."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:330
+#: admin/class-neznam-atproto-share-admin.php:358
+msgid "Include WordPress tags in the ATProto post"
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:388
 msgid ""
 "Adjusts the amount of details written to <a href='https://developer."
 "wordpress.org/advanced-administration/debug/debug-wordpress' "
 "target='_blank'>WordPress' Debug system</a>."
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:361
-#: admin/class-neznam-atproto-share-admin.php:391
-#: admin/class-neznam-atproto-share-admin.php:419
+#: admin/class-neznam-atproto-share-admin.php:409
+msgid "Enable comments."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:421
+msgid ""
+"For posts published to Bluesky, replace WordPress comments with Bluesky "
+"reply threads."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:434
+msgid ""
+"If \"Use Bluesky Replies as Comments\" is enabled but post is not published "
+"to Bluesky, enabling this will hide default WordPress comments."
+msgstr ""
+
+#: admin/class-neznam-atproto-share-admin.php:456
+#: admin/class-neznam-atproto-share-admin.php:486
+#: admin/class-neznam-atproto-share-admin.php:514
 msgid "Nonce is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:365
-#: admin/class-neznam-atproto-share-admin.php:395
+#: admin/class-neznam-atproto-share-admin.php:460
+#: admin/class-neznam-atproto-share-admin.php:490
 msgid "Required fields are empty"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:372
-msgid "Handle is incorrect"
+#: admin/class-neznam-atproto-share-admin.php:467
+msgid "Handle is incorrect - "
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:403
+#: admin/class-neznam-atproto-share-admin.php:498
 msgid "Password is incorrect"
 msgstr ""
 
-#: admin/class-neznam-atproto-share-admin.php:499
-msgid "Atproto Share"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:528
-msgid "Published on Atproto"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:529
-msgid "View on Bluesky"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:546
-msgid "Publish on Atproto?"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:547
-msgid "Publishes post to Atproto network."
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:549
-msgid "Text to publish"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:555
-msgid "Text to add as status"
-msgstr ""
-
-#: admin/class-neznam-atproto-share-admin.php:570
+#: admin/class-neznam-atproto-share-admin.php:594
 msgid "Every minute"
 msgstr ""
 
+#: public/class-neznam-atproto-share-public.php:180
+msgid "No replies."
+msgstr ""
+
+#: public/class-neznam-atproto-share-public.php:181
+msgid "Post a reply on BlueSky."
+msgstr ""
+
+#: public/class-neznam-atproto-share-public.php:182
+msgid "Show replies"
+msgstr ""
+
+#: public/class-neznam-atproto-share-public.php:183
+msgid "remaining"
+msgstr ""
+
 #. translators: %s: URL of post
-#: public/partials/comments.php:84
+#: public/partials/comments.php:109
 #, php-format
 msgid "Loading comments from <a href=\"%s\">Bluesky post</a>&hellip;"
 msgstr ""
