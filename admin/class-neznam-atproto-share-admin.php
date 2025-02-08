@@ -170,6 +170,16 @@ class Neznam_Atproto_Share_Admin {
 				'default'           => '0',
 			)
 		);
+
+		register_setting(
+			'neznam-atproto-share',
+			$this->plugin_name . '-tags',
+			array(
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '0',
+			)
+		);
+        
 		register_setting(
 			'neznam-atproto-share',
 			$this->plugin_name . '-post-format',
@@ -338,6 +348,19 @@ class Neznam_Atproto_Share_Admin {
 			'neznam-atproto-share',
 			$this->plugin_name . '-section'
 		);
+
+		add_settings_field(
+			$this->plugin_name . '-tags',
+			'Include tags',
+			function () {
+				?>
+				<input type="checkbox" name="<?php echo esc_html( $this->plugin_name ); ?>-tags" value="1" <?php checked( 1, get_option( $this->plugin_name . '-tags' ), true ); ?> />
+				<small><?php esc_html_e( 'Include WordPress tags in the ATProto post', 'neznam-atproto-share' ); ?></small>
+				<?php
+			},
+			'neznam-atproto-share',
+			$this->plugin_name . '-section'
+		);        
 
 		add_settings_field(
 			$this->plugin_name . '-debug-level',
