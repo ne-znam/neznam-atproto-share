@@ -4,8 +4,8 @@ Donate link: https://nezn.am
 Tags: atproto, share, bluesky
 Requires at least: 6.0.0
 Requires PHP: 8.0.0
-Tested up to: 6.7.0
-Stable tag: 2.2.0
+Tested up to: 6.9.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,9 @@ You can use the `neznam_atproto_comment_template` filter to modify the comment t
 2. This screen shows the settings page
 
 == Changelog ==
+
+= 2.2.1 =
+* WordPress version update
 
 = 2.2.0 =
 * Added option to add tags to the post

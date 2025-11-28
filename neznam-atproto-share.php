@@ -10,7 +10,7 @@
  * Plugin Name:       Neznam Atproto Share
  * Plugin URI:        https://nezn.am/plugins/neznam-atproto-share
  * Description:       Automatically share to Authenticated Transfer Protocol networks like BlueSky
- * Version:           2.2.0
+ * Version:           2.2.1
  * Author:            Marko Banušić
  * Author URI:        https://nezn.am
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'NEZNAM_ATPROTO_SHARE_VERSION', '2.2.0' );
+define( 'NEZNAM_ATPROTO_SHARE_VERSION', '2.2.1' );
 
 /**
  * The code that runs during plugin activation.
