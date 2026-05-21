@@ -54,6 +54,9 @@ You can use the `neznam_atproto_comment_template` filter to modify the comment t
 
 == Changelog ==
 
+= 2.2.1 =
+* WordPress version update
+
 = 2.2.0 =
 * Added option to add tags to the post
 

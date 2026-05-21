@@ -4,8 +4,8 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.*   | :white_check_mark: |
+| 2.*   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
-Please send any vulenrability report to [marko@nezn.am](mailto:marko@nezn.am)
+Please send any vulnerability report to [marko@nezn.am](mailto:marko@nezn.am)
