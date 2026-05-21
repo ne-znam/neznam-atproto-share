@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'NEZNAM_ATPROTO_SHARE_VERSION', '2.2.1' );
+define( 'NEZNAM_ATPROTO_SHARE_VERSION', '2.2.2' );
 
 /**
  * The code that runs during plugin activation.
