@@ -8,7 +8,7 @@ This plugin enables automatic posting of articles to ATProto networks like BlueS
 
 The plugin adds a new section in the Settings -> Writing page where you can enter the login information for your ATProto network.
 
-A new meta box is added to the post editor where you can select weather to share the post to your ATProto network and what status to use.
+A new meta box is added to the post editor where you can select whether to share the post to your ATProto network and what status to use.
 
 If no status is selected, the plugin will use the title of the post as the status.
 
@@ -24,13 +24,19 @@ We recommend hooking up the cron system to a cron job on your server. You can fi
 
 ## Frequently Asked Questions
 
-### Can I use this with BlueSky
+### Does this work with the Classic editor and/or the Block editor?
+
+### What are the recommended WordPress settings under 'Settings -> Discussion'?
+
+### Do comments appear immediately on my site or at the next cron job?
+
+### Can I use this with BlueSky?
 
 Yes, you can use this with BlueSky. Just make sure you have the correct login information. BlueSky default URL is default in the plugin settings.
 
 Please visit [App Passwords](https://bsky.app/settings/app-passwords) in your BlueSky account to generate a new password for this plugin.
 
-### Can I use this with other ATProto networks
+### Can I use this with other ATProto networks?
 
 Yes, you can use this with other ATProto networks. Just make sure you have the correct login information.
 
